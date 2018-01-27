@@ -34,6 +34,15 @@ VALUES
 (4,'Assessor II'),
 (5,'Assessor III');
 
+/* Carga para Cargos */
+INSERT INTO dbs_ponto.tipo_justificativas
+(id,tipo_justificativa)
+VALUES
+(1,'Atraso'),
+(2,'Greve'),
+(3,'Abono'),
+(4,'Outros');
+
 /* Carga para Usuarios */
 INSERT INTO dbs_ponto.usuarios
 (id,email,senha,token,acessos_id)
