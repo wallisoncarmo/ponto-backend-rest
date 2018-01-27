@@ -2,11 +2,10 @@
 
 // Cabeçalho para JSON 
 //header('Content-type: application/json');
-
 // Configurações iniciais
 require('config.php');
 require('autoload.php');
-require('mensagem_pt.php');
+require('Config/leng/texto_pt.php');
 
 // importa as funcoes publicas
 require('Util/public_function.php');
