@@ -51,7 +51,6 @@ class Request {
                 unset($this->request['id']);
             }
 
-
             $this->request['url'] = $this->getURL();
         } catch (Exception $exc) {
             exit();
@@ -73,7 +72,7 @@ class Request {
                 $url .= '/' . $this->request['id'];
             }
         }
-        
+
         return $url;
     }
 

@@ -27,7 +27,7 @@ abstract class AbstractClasse {
     public function validaCampos($campos, $obj, $path, $update = null) {
 
         // prepara a mensagem de alerta
-        $res = new ValidationError(400, 'Inconsistência nos dados', null, $path);
+        $res = new ValidationError(BAD_REQUEST_CODE, ERROR_DADOS_INCORRETOS, null, $path);
 
         $result = array();
 
@@ -60,13 +60,13 @@ abstract class AbstractClasse {
                             break;
 
                         default:
-                            $res->setErros($key, 'Tipo do parametro é inválido' . $campos[$key]["tipo"]);
+                            $res->setErros($key, ERROR_TIPO_INVALIDO . $campos[$key]["tipo"]);
                             break;
                     }
                 }
                 unset($campos[$key]);
             } else {
-                $res->setErros($key, 'Esse campo não existe, favor verificar o seu nome.');
+                $res->setErros($key, ERROR_CAMPO_NAO_EXISTE);
             }
         }
 
@@ -74,7 +74,7 @@ abstract class AbstractClasse {
             $msg = '';
             foreach ($campos as $key => $value) {
                 if ($value["obrigatorio"] && !$value['key']) {
-                    $res->setErros($key, 'É necessário informar o campo ' . $key);
+                    $res->setErros($key, ERROR_CAMPO_NECESSARIO . $key);
                 }
             }
         }
@@ -100,17 +100,17 @@ abstract class AbstractClasse {
         if ($value) {
             if ($max) {
                 if (strlen($value) > $max) {
-                    return "Campo exede o limite de " . $max . " caracter.";
+                    return ERROR_CAMPO_MAX_MSG . $max . CARACTER;
                 }
             }
             if ($min) {
                 if (strlen($value) < $min) {
-                    return "É necessário te mais que " . $min . " caracter.";
+                    return ERROR_CAMPO_MIN_MSG . $min . CARACTER;
                 }
             }
             return '';
         }
-        return "Esse é um campo Obrigatório.";
+        return ERROR_CAMPO_OBRIGATORIO;
     }
 
     /**
@@ -122,7 +122,7 @@ abstract class AbstractClasse {
         if (is_numeric($value)) {
             return '';
         }
-        return "Informe um valor inteiro";
+        return ERROR_INTEIRO;
     }
 
     /**
@@ -135,7 +135,7 @@ abstract class AbstractClasse {
         if (is_bool($value)) {
             return '';
         }
-        return 'Informe um tipo de boolean.';
+        return ERROR_BOOLEAN;
     }
 
     /**
@@ -150,11 +150,11 @@ abstract class AbstractClasse {
 
         // Verifica se foi informado todos os digitos corretamente
         if (strlen($cpf) != 11) {
-            return 'Esse não é um cpf válido';
+            return ERROR_CPF;
         }
         // Verifica se foi informada uma sequência de digitos repetidos. Ex: 111.111.111-11
         if (preg_match('/(\d)\1{10}/', $cpf)) {
-            return 'Esse não é um cpf válido';
+            return ERROR_CPF;
         }
         // Faz o calculo para validar o CPF
         for ($t = 9; $t < 11; $t++) {
@@ -163,7 +163,7 @@ abstract class AbstractClasse {
             }
             $d = ((10 * $d) % 11) % 10;
             if ($cpf{$c} != $d) {
-                return 'Esse não é um cpf válido';
+                return ERROR_CPF;
             }
         }
         return '';
@@ -195,7 +195,7 @@ abstract class AbstractClasse {
         if (ereg($pattern, $email)) {
             return '';
         } else {
-            return 'Informe um e-mail válido';
+            return ERROR_EMAIL;
         }
     }
 
@@ -212,10 +212,19 @@ abstract class AbstractClasse {
         foreach ($obj as $key => $value) {
             if (array_key_exists($key, $objNew)) {
                 $result[$key] = $objNew[$key];
+                unset($objNew[$key]);
             } else {
                 $result[$key] = $obj[$key];
             }
         }
+
+        // caso ainda tenha elemento no outro objeto ele é adicionado ao result
+        if (!empty($objNew)) {
+            foreach ($objNew as $key => $value) {
+                $result[$key] = $objNew[$key];
+            }
+        }
+
         return $result;
     }
 

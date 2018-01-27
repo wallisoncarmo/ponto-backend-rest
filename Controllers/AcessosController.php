@@ -89,7 +89,7 @@ class AcessosController extends AbstractController {
                 $this->returnJson($viewModel->update($obj), $code, $url);
             }
         } else {
-            $res = new StandartError(400, 'Not Found', 'O Id informado não existe!', $url);
+            $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
             $res->getJsonError();
         }
     }
@@ -106,7 +106,7 @@ class AcessosController extends AbstractController {
             $res = $viewModel->delete($this->request['id']);
             $this->returnJson($res, 200);
         } else {
-            $res = new StandartError(400, 'Not Found', 'O Id informado não existe!', $url);
+            $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
             $res->getJsonError();
         }
     }

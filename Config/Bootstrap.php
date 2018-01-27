@@ -27,7 +27,7 @@ class Bootstrap {
         // verifca o valor da controller
         if ($this->request['controller'] == "") {
             // metodo não listado
-            $exc = new StandartError(405, "Method Not Allowed", 'Metodo não existe', $this->request['url']);
+            $exc = new StandartError(METHOD_NOT_ALLOWED_CODE, METHOD_NOT_ALLOWED, METHOD_NOT_ALLOWED_MSG, $this->request['url']);
             $exc->getJsonError();
         } else {
             // monta o nome da controller
@@ -77,15 +77,15 @@ class Bootstrap {
                 } else {
 
                     // metodo não listado
-                    $exc = new StandartError(405, "Method Not Allowed", 'Metodo não existe', $this->request['url']);
+                    $exc = new StandartError(METHOD_NOT_ALLOWED_CODE, METHOD_NOT_ALLOWED, METHOD_NOT_ALLOWED_MSG, $this->request['url']);
                     $exc->getJsonError();
                 }
             } else {
-                $exc = new StandartError(400, "Not Found", 'A Controlladora não existe', $this->request['url']);
+                $exc = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST_CODE, BAD_REQUEST_CONTOLLER, $this->request['url']);
                 $exc->getJsonError();
             }
         } else {
-            $exc = new StandartError(404, "Not Found", 'Controller não existe', $this->request['url']);
+            $exc = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_CONTOLLER, $this->request['url']);
             $exc->getJsonError();
         }
     }

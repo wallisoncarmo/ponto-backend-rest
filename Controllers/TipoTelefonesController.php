@@ -90,7 +90,7 @@ class TipoTelefonesController extends AbstractController {
                 $this->returnJson($viewModel->update($obj), $code, $url);
             }
         } else {
-            $res = new StandartError(400, 'Not Found', 'O Id informado não existe!', $url);
+            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND,NotFoundId, $url);
             $res->getJsonError();
         }
     }
@@ -107,7 +107,7 @@ class TipoTelefonesController extends AbstractController {
             $res = $viewModel->delete($this->request['id']);
             $this->returnJson($res, 200);
         } else {
-            $res = new StandartError(400, 'Not Found', 'O Id informado não existe!', $url);
+            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NotFoundId, $url);
             $res->getJsonError();
         }
     }
