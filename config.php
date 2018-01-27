@@ -8,4 +8,4 @@ define("DB_NAME", "dbs_ponto");
 
 // URL
 define("ROOT_PATH", "/");
-define("ROOT_URL", "http://localhost/sistema-ponto-rest-backend/");
+define("ROOT_URL", "http://localhost/ponto-backend-rest/");

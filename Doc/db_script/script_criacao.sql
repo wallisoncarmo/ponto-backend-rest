@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2018-01-27 10:10
+-- Generated: 2018-01-27 10:41
 -- Model: New Model
 -- Version: 1.0
 -- Project: Sistema de Ponto
@@ -99,11 +99,18 @@ CREATE TABLE IF NOT EXISTS `dbs_ponto`.`telefones` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `telefone` VARCHAR(12) NOT NULL,
   `colaboradores_id` INT(11) NOT NULL,
+  `tipo_telefones_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_telefones_colaboradores1_idx` (`colaboradores_id` ASC),
+  INDEX `fk_telefones_tipo_telefones1_idx` (`tipo_telefones_id` ASC),
   CONSTRAINT `fk_telefones_colaboradores1`
     FOREIGN KEY (`colaboradores_id`)
     REFERENCES `dbs_ponto`.`colaboradores` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_telefones_tipo_telefones1`
+    FOREIGN KEY (`tipo_telefones_id`)
+    REFERENCES `dbs_ponto`.`tipo_telefones` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -168,18 +175,11 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `dbs_ponto`.`tipo_telefones` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `tipo_telefone` VARCHAR(250) NOT NULL,
-  `telefones_id` INT(11) NOT NULL,
   `cadastro` DATETIME NOT NULL DEFAULT NOW(),
   `atualizado` DATETIME NULL DEFAULT NULL,
   `ativo` TINYINT(4) NOT NULL DEFAULT 1,
   `excluido` TINYINT(4) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  INDEX `fk_tipo_telefones_telefones1_idx` (`telefones_id` ASC),
-  CONSTRAINT `fk_tipo_telefones_telefones1`
-    FOREIGN KEY (`telefones_id`)
-    REFERENCES `dbs_ponto`.`telefones` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`id`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
