@@ -8,6 +8,8 @@
 
 namespace Config;
 
+use Config\Exeption\StandartError;
+
 /**
  * Classe para o tratamento das resquest
  * @author Wallison do Carmo Costa
@@ -36,24 +38,33 @@ class Request {
     public function setRequest() {
         try {
             $this->request = $_GET;
-            $body = file_get_contents("php://input");
-            $body = json_decode($body);
+            $json = file_get_contents("php://input");
+            $body = (array) json_decode($json);
             $auth = $this->getAuthorizationHeaders();
+            $this->request['type'] = $_SERVER['REQUEST_METHOD'];
+
             if ($auth) {
                 $this->request['authorization'] = $auth;
             }
 
-            $this->request['type'] = $_SERVER['REQUEST_METHOD'];
-            if ($this->request['type'] == 'POST' || $this->request['type'] == 'PUT') {
-                $this->request['body'] = $body;
-            }
             if ($this->request['type'] == 'POST') {
                 unset($this->request['id']);
             }
-
             $this->request['url'] = $this->getURL();
+
+            if ($this->request['type'] == 'POST' || $this->request['type'] == 'PUT') {
+                if (count($body)) {
+                    $this->request['body'] = $body;
+                } else {
+                    $res = new StandartError(BAD_REQUEST_CODE, ERROR_SINTAXE . "[{$json}]", null, $this->getURL());
+                    $res->getJsonError();
+                    $this->request = null;
+                }
+            }
         } catch (Exception $exc) {
-            exit();
+            $res = new StandartError(BAD_REQUEST_CODE, $exc->getMessage(), null, $this->getURL());
+            $res->getJsonError();
+            $this->request = null;
         }
     }
 

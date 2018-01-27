@@ -30,7 +30,7 @@ class AcessosController extends AbstractController {
         if (!$res) {
             $res = array();
         } else {
-            $this->returnJson($res, 200);
+            $this->returnJson($res, OK_CODE);
         }
     }
 
@@ -42,7 +42,7 @@ class AcessosController extends AbstractController {
         $url = $this->request["url"];
         $res = $viewModel->findById($this->request['id']);
 
-        $code = 200;
+        $code = OK_CODE;
         if (!$res) {
             $res = array();
             $code = 404;
@@ -62,7 +62,7 @@ class AcessosController extends AbstractController {
         if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
             $obj->setId(null);
             $obj->setAcesso($body['acesso']);
-            $this->returnJson($viewModel->add($obj), 201, $url);
+            $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
         }
     }
 
@@ -79,9 +79,9 @@ class AcessosController extends AbstractController {
         if ($obj_old) {
 
             $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old);
+            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
             
-            $code = 200;
+            $code = OK_CODE;
 
             if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
                 $obj->setId($body['id']);
@@ -104,7 +104,7 @@ class AcessosController extends AbstractController {
 
         if ($obj) {
             $res = $viewModel->delete($this->request['id']);
-            $this->returnJson($res, 200);
+            $this->returnJson($res, OK_CODE);
         } else {
             $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
             $res->getJsonError();

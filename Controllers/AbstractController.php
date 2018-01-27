@@ -8,7 +8,6 @@
 
 namespace Controllers;
 
-
 /**
  * Classe Abastrata para as controladoras
  * @author Wallison do Carmo Costa
@@ -32,8 +31,10 @@ abstract class AbstractController {
     }
 
     /**
-     * Monta a saida do serviço
-     * @param type $data
+     * Monta a resposta do json
+     * @param type $data o que irá vir no cabeçalho
+     * @param type $code codigo http
+     * @param type $url esse campo só é informado caso queria exibir um url do registro inserido
      */
     protected function returnJson($data, $code, $url = null) {
 

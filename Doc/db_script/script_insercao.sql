@@ -45,31 +45,31 @@ VALUES
 
 /* Carga para Usuarios */
 INSERT INTO dbs_ponto.usuarios
-(id,email,senha,token,acessos_id)
+(id,email,senha,acessos_id)
 VALUES
-(1,'wallisoncarmo01@gmail.com',md5(123),12345678901,1),
-(2,'yasmin@gmail.com',md5(123),12345678902,2),
-(3,'lucy@gmail.com',md5(123),12345678903,2),
-(4,'wilson@gmail.com',md5(123),12345678904,2),
-(5,'kedson@gmail.com',md5(123),12345678905,2),
+(1,'wallisoncarmo01@gmail.com',md5(123),1),
+(2,'yasmin@gmail.com',md5(123),2),
+(3,'lucy@gmail.com',md5(123),2),
+(4,'wilson@gmail.com',md5(123),2),
+(5,'kedson@gmail.com',md5(123),2),
 
-(6,'rony@gmail.com',md5(123),12345678906,3),
-(7,'hudson@gmail.com',md5(123),12345678907,3),
-(8,'erick@gmail.com',md5(123),12345678908,3),
-(9,'maria@gmail.com',md5(123),12345678909,3),
-(10,'socorro@gmail.com',md5(123),123456789011,3),
+(6,'rony@gmail.com',md5(123),3),
+(7,'hudson@gmail.com',md5(123),3),
+(8,'erick@gmail.com',md5(123),3),
+(9,'maria@gmail.com',md5(123),3),
+(10,'socorro@gmail.com',md5(123),3),
 
-(11,'thiago@gmail.com',md5(123),123456789012,3),
-(12,'pedro@gmail.com',md5(123),123456789013,3),
-(13,'joao@gmail.com',md5(123),123456789014,3),
-(14,'miguel@gmail.com',md5(123),123456789015,3),
-(15,'arthur@gmail.com',md5(123),123456789016,3),
+(11,'thiago@gmail.com',md5(123),3),
+(12,'pedro@gmail.com',md5(123),3),
+(13,'joao@gmail.com',md5(123),3),
+(14,'miguel@gmail.com',md5(123),3),
+(15,'arthur@gmail.com',md5(123),3),
 
-(16,'alice@gmail.com',md5(123),123456789017,3),
-(17,'shopia@gmail.com',md5(123),123456789018,3),
-(18,'heitor@gmail.com',md5(123),123456789019,3),
-(19,'Gabriel@gmail.com',md5(123),123456789020,3),
-(20,'Laura@gmail.com',md5(123),123456789021,3);
+(16,'alice@gmail.com',md5(123),3),
+(17,'shopia@gmail.com',md5(123),3),
+(18,'heitor@gmail.com',md5(123),3),
+(19,'Gabriel@gmail.com',md5(123),3),
+(20,'Laura@gmail.com',md5(123),3);
 
 /* Carga para Colaboradores */
 INSERT INTO dbs_ponto.colaboradores

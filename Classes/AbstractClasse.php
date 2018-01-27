@@ -73,7 +73,7 @@ abstract class AbstractClasse {
         if (!empty($campos) && !$update) {
             $msg = '';
             foreach ($campos as $key => $value) {
-                if ($value["obrigatorio"] && !$value['key']) {
+                if ($value["obrigatorio"] && !isset($value['key'])) {
                     $res->setErros($key, ERROR_CAMPO_NECESSARIO . $key);
                 }
             }
@@ -203,9 +203,10 @@ abstract class AbstractClasse {
      * Compara dois arrays e subistitui as diferenças
      * @param type $objNew Novo Array 
      * @param type $obj Array que sofrerar alteração
+     * @param type $campos Array com os campos
      * @return type
      */
-    public function compareDif($objNew, $obj) {
+    public function compareDif($objNew, $obj, $campos) {
 
         $result = array();
 
@@ -214,7 +215,9 @@ abstract class AbstractClasse {
                 $result[$key] = $objNew[$key];
                 unset($objNew[$key]);
             } else {
-                $result[$key] = $obj[$key];
+                if (array_key_exists($key, $campos)) {
+                    $result[$key] = $obj[$key];
+                }
             }
         }
 

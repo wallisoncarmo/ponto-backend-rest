@@ -11,25 +11,35 @@ namespace Classes;
 use Classes\AbstractClasse;
 
 /**
- * Entidade de Acessos
+ * Entidade de Usuarios
  * @author Wallison do Carmo Costa
  */
-class Acessos extends AbstractClasse {
+class Usuarios extends AbstractClasse {
 
     private $id;
+    private $email;
+    private $senha;
+    private $token;
     private $acesso;
     private $cadatro;
     private $atualizado;
     private $ativo;
     private $excluido;
 
-    function __construct() {
-        
-    }
-
-    
     function getId() {
         return $this->id;
+    }
+
+    function getEmail() {
+        return $this->email;
+    }
+
+    function getSenha() {
+        return $this->senha;
+    }
+
+    function getToken() {
+        return $this->token;
     }
 
     function getAcesso() {
@@ -56,12 +66,20 @@ class Acessos extends AbstractClasse {
         $this->id = $id;
     }
 
-    function setAcesso($acesso) {
-        $this->acesso = $acesso;
+    function setEmail($email) {
+        $this->email = $email;
     }
 
-    function setSigla($sigla) {
-        $this->sigla = $sigla;
+    function setSenha($senha) {
+        $this->senha = $senha;
+    }
+
+    function setToken($token) {
+        $this->token = $token;
+    }
+
+    function setAcesso(Acessos $acesso) {
+        $this->acesso = $acesso;
     }
 
     function setCadatro($cadatro) {
@@ -80,7 +98,6 @@ class Acessos extends AbstractClasse {
         $this->excluido = $excluido;
     }
 
-    
     /**
      * Aqui deve se informar os campos e seus detalhes
      * [tipo] Dependendo do que foi checkado será validado pelo 
@@ -93,7 +110,10 @@ class Acessos extends AbstractClasse {
     function getCampos() {
         return [
             'id' => ['tipo' => 'integer', 'obrigatorio' => true, 'key' => true],
-            'acesso' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
+            'email' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
+            'senha' => ['tipo' => 'string', 'max' => 50, 'min' => 5, 'obrigatorio' => true],
+            'token' => ['tipo' => 'string', 'max' => 250, 'min' => 10, 'obrigatorio' => false],
+            'acessos_id' => ['tipo' => 'integer', 'obrigatorio' => true],
             'cadastro' => ['tipo' => 'string', 'max' => 2, 'min' => 10, 'obrigatorio' => false],
             'atualizado' => ['tipo' => 'string', 'max' => 2, 'min' => 10, 'obrigatorio' => false],
             'ativo' => ['tipo' => 'boolean', 'obrigatorio' => false],

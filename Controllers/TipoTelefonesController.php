@@ -30,7 +30,7 @@ class TipoTelefonesController extends AbstractController {
         if (!$res) {
             $res = array();
         } else {
-            $this->returnJson($res, 200);
+            $this->returnJson($res, OK_CODE);
         }
     }
 
@@ -42,7 +42,7 @@ class TipoTelefonesController extends AbstractController {
         $url = $this->request["url"];
         $res = $viewModel->findById($this->request['id']);
 
-        $code = 200;
+        $code = OK_CODE;
         if (!$res) {
             $res = array();
             $code = 404;
@@ -63,7 +63,7 @@ class TipoTelefonesController extends AbstractController {
         if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
             $obj->setId(null);
             $obj->setTipoTelefone($body['tipo_telefone']);
-            $this->returnJson($viewModel->add($obj), 201, $url);
+            $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
         }
     }
 
@@ -80,9 +80,9 @@ class TipoTelefonesController extends AbstractController {
         if ($obj_old) {
 
             $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old);
+            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
             
-            $code = 200;
+            $code = OK_CODE;
 
             if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
                 $obj->setId($body['id']);
@@ -105,7 +105,7 @@ class TipoTelefonesController extends AbstractController {
 
         if ($obj) {
             $res = $viewModel->delete($this->request['id']);
-            $this->returnJson($res, 200);
+            $this->returnJson($res, OK_CODE);
         } else {
             $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NotFoundId, $url);
             $res->getJsonError();

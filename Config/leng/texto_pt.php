@@ -14,6 +14,11 @@ define("METHOD_NOT_ALLOWED_CODE", 405);
 define("METHOD_NOT_ALLOWED", 'Method Not Allowed');
 define("METHOD_NOT_ALLOWED_MSG", 'Metodo não existe.');
 
+define("CREATE_CODE", 201);
+define("CREATE", 'Create');
+
+define("OK_CODE", 200);
+define("OK", 'Ok');
 
 // PALAVRA SOLTAS
 define("CARACTER", "caracter");
@@ -30,3 +35,7 @@ define("ERROR_INTEIRO", "Informe um valor inteiro.");
 define("ERROR_CPF", "Esse não é um cpf válido");
 define("ERROR_BOOLEAN", "Informe um tipo de boolean.");
 define("ERROR_EMAIL", "Informe um e-mail válido");
+
+define("ERROR_SINTAXE", "Foi encontrado um erro na sintaxe da requisição favor verificar.");
+define("ERROR_LOGIN_EMAIL", "O E-mail informado não existe.");
+define("ERROR_LOGIN_SENHA", "Senha incorreta.");

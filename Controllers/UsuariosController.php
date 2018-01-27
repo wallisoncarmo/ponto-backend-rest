@@ -8,22 +8,23 @@
 
 namespace Controllers;
 
-use Classes\TipoJustificativas;
+use Classes\Usuarios;
+use Classes\Acessos;
 use Controllers\AbstractController;
-use Models\TipoJustificativasModel;
+use Models\UsuariosModel;
 use Config\Exeption\StandartError;
 
 /**
  * Controller de compartilhamento
  * @author Wallison do Carmo Costa
  */
-class TipoJustificativasController extends AbstractController {
+class UsuariosController extends AbstractController {
 
     /**
      * Recupera todos os registros
      */
     protected function findAll() {
-        $viewModel = new TipoJustificativasModel();
+        $viewModel = new UsuariosModel();
         $url = $this->request["url"];
         $res = $viewModel->findAll();
 
@@ -38,14 +39,14 @@ class TipoJustificativasController extends AbstractController {
      * Recupera um registro
      */
     protected function findById() {
-        $viewModel = new TipoJustificativasModel();
+        $viewModel = new UsuariosModel();
         $url = $this->request["url"];
         $res = $viewModel->findById($this->request['id']);
 
         $code = OK_CODE;
         if (!$res) {
             $res = array();
-            $code = 404;
+            $code = NOT_FOUND_CODE;
         }
         $this->returnJson($res, $code);
     }
@@ -53,16 +54,48 @@ class TipoJustificativasController extends AbstractController {
     /**
      * ADD share
      */
-    protected function add() {
-        
-        $viewModel = new TipoJustificativasModel();
+    protected function login() {
+        $viewModel = new UsuariosModel();
         $url = $this->request["url"];
         $body = (array) $this->request["body"];
-        $obj = new TipoJustificativas();
+        $obj = new Usuarios();
+
+        if (isset($body['email']) && isset($body['senha'])) {
+            $obj->setEmail($body['email']);
+            $obj->setSenha($body['senha']);
+
+            $token = $viewModel->login($obj);
+
+            if ($token == ERROR_LOGIN_EMAIL) {
+                $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, ERROR_LOGIN_EMAIL, $url);
+                $res->getJsonError();
+            } else if ($token == ERROR_LOGIN_SENHA) {
+                $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, ERROR_LOGIN_SENHA, $url);
+                $res->getJsonError();
+            } else {
+
+                $this->returnJsonLogin($token, OK_CODE);
+            }
+        }
+    }
+
+    /**
+     * ADD share
+     */
+    protected function add() {
+        $viewModel = new UsuariosModel();
+        $url = $this->request["url"];
+        $body = (array) $this->request["body"];
+
+        $obj = new Usuarios();
 
         if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
+
             $obj->setId(null);
-            $obj->setTipoJustificativa($body['tipo_justificativa']);
+            $obj->setEmail($body['email']);
+            $obj->setSenha($body['senha']);
+            $obj->setAcesso(new Acessos());
+            $obj->getAcesso()->setId($body['acessos_id']);
             $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
         }
     }
@@ -71,23 +104,27 @@ class TipoJustificativasController extends AbstractController {
      * Atualiza um registro
      */
     protected function update() {
-        $viewModel = new TipoJustificativasModel();
+        $viewModel = new UsuariosModel();
         $url = $this->request["url"];
-        $obj = new TipoJustificativas();
+
+        $obj = new Usuarios();
 
         $id = $this->request["id"];
         $obj_old = $viewModel->findById($id);
         if ($obj_old) {
 
             $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
-            
+            $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
+
             $code = OK_CODE;
 
             if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
                 $obj->setId($body['id']);
-                $obj->setTipoJustificativa($body['tipo_justificativa']);
-                $this->returnJson($viewModel->update($obj), $code, $url);
+                $obj->setEmail($body['email']);
+                $obj->setAcesso(new Acessos());
+                $obj->getAcesso()->setId($body['acessos_id']);
+
+                $this->returnJson($viewModel->update($obj), $code);
             }
         } else {
             $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
@@ -100,7 +137,7 @@ class TipoJustificativasController extends AbstractController {
      */
     protected function delete() {
         $url = $this->request["url"];
-        $viewModel = new TipoJustificativasModel();
+        $viewModel = new UsuariosModel();
         $obj = $viewModel->findById($this->request['id']);
 
         if ($obj) {
@@ -110,6 +147,17 @@ class TipoJustificativasController extends AbstractController {
             $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
             $res->getJsonError();
         }
+    }
+
+    /**
+     * Monta a saida do serviço
+     * @param type $data
+     */
+    protected function returnJsonLogin($token, $code) {
+
+        $token = "Beare " . $token;
+        header("Authorization: {$token}");
+        http_response_code($code);
     }
 
 }

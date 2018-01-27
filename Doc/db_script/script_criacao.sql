@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2018-01-27 10:41
+-- Generated: 2018-01-27 18:54
 -- Model: New Model
 -- Version: 1.0
 -- Project: Sistema de Ponto
@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS `dbs_ponto`.`usuarios` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(250) NOT NULL,
   `senha` VARCHAR(50) NOT NULL,
-  `token` VARCHAR(250) NOT NULL,
   `acessos_id` INT(11) NOT NULL,
   `cadastro` DATETIME NOT NULL DEFAULT NOW(),
   `atualizado` DATETIME NULL DEFAULT NULL,
@@ -203,6 +202,23 @@ CREATE TABLE IF NOT EXISTS `dbs_ponto`.`cargos` (
   `ativo` TINYINT(4) NOT NULL DEFAULT 1,
   `excluido` TINYINT(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `dbs_ponto`.`usuarios_token` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `token` VARCHAR(250) NOT NULL,
+  `tempo_vida` DATETIME NOT NULL,
+  `cadastro` DATETIME NOT NULL,
+  `usuarios_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_usuarios_token_usuarios1_idx` (`usuarios_id` ASC),
+  UNIQUE INDEX `token_UNIQUE` (`token` ASC),
+  CONSTRAINT `fk_usuarios_token_usuarios1`
+    FOREIGN KEY (`usuarios_id`)
+    REFERENCES `dbs_ponto`.`usuarios` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 

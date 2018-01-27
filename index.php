@@ -17,13 +17,15 @@ use Config\Request;
 // prepara o request
 $request = new Request();
 
+if ($request->getRequest()) {    
 // inicia o boostrap
-$bootstrap = new Bootstrap($request->getRequest());
+    $bootstrap = new Bootstrap($request->getRequest());
 
 // cria a controller
-$controller = $bootstrap->createController();
+    $controller = $bootstrap->createController();
 
 //Executa a contoladora recuperada do boostrap
-if ($controller) {
-    $controller->executeAction();
+    if ($controller) {
+        $controller->executeAction();
+    }
 }
