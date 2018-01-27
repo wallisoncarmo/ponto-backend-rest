@@ -30,7 +30,8 @@ class Bootstrap {
             $exc = new StandartError(405, "Method Not Allowed", 'Metodo não existe', $this->request['url']);
             $exc->getJsonError();
         } else {
-            $this->controller = $this->request['controller'] . 'Controller';
+            // monta o nome da controller
+            $this->controller = str_replace(["_", "-"], ["", ""], $this->request['controller']) . 'Controller';
             // verifca o valor da action
             if ($this->request['action'] == "") {
 
@@ -51,19 +52,20 @@ class Bootstrap {
                     }
                 }
             } else {
-                $this->action = $this->request['action'];
+                // monta o nome do metodo caso já possua
+                $this->action = str_replace(["_", "-"], ["", ""], $this->request['action']);
             }
         }
     }
 
     public function createController() {
- 
-        $this->controller="Controllers\\".$this->controller;
-        
+
+        $this->controller = "Controllers\\" . $this->controller;
+
         // verifica se a classe existe
         if (class_exists($this->controller)) {
 
-            
+
             $parent = class_parents($this->controller);
 
             // Verifica se a classe abstrata de controller existe

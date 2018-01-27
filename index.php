@@ -1,6 +1,6 @@
 <?php
 
-// Cabeçalho para JSON
+// Cabeçalho para JSON 
 header('Content-type: application/json');
 
 // Configurações iniciais
