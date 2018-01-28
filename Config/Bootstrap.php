@@ -49,6 +49,9 @@ class Bootstrap {
                         $this->action = 'update';
                     } else if ($this->request["type"] == 'DELETE') {
                         $this->action = 'delete';
+                    } else {
+                        $exc = new StandartError(METHOD_NOT_ALLOWED_CODE, METHOD_NOT_ALLOWED, METHOD_NOT_ALLOWED_MSG, $this->request['url']);
+                        $exc->getJsonError();
                     }
                 }
             } else {

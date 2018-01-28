@@ -123,7 +123,7 @@ abstract class AbstractModel {
      */
     private function getErrorSTMT() {
         $error = $this->stmt->errorInfo();
-        $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, '[' . $error[0] . ']' . $error[2], '');
+        $res = new StandartError(CONFLICT_CODE, CONFLICT, '[' . $error[0] . ']' . $error[2], '');
         $res->getJsonError();
         exit();
     }
@@ -133,7 +133,7 @@ abstract class AbstractModel {
      */
     private function getErrorDB() {
         $error = $this->db->errorInfo();
-        $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, '[' . $error[0] . ']' . $error[2], '');
+        $res = new StandartError(CONFLICT_CODE, CONFLICT, '[' . $error[0] . ']' . $error[2], '');
         $res->getJsonError();
         exit();
     }

@@ -23,14 +23,18 @@ class AcessosController extends AbstractController {
      * Recupera todos os registros
      */
     protected function findAll() {
-        $viewModel = new AcessosModel();
         $url = $this->request["url"];
-        $res = $viewModel->findAll();
 
-        if (!$res) {
-            $res = array();
-        } else {
-            $this->returnJson($res, OK_CODE);
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new AcessosModel();
+            $res = $viewModel->findAll();
+
+            if (!$res) {
+                $res = array();
+            } else {
+                $this->returnJson($res, OK_CODE);
+            }
         }
     }
 
@@ -38,31 +42,39 @@ class AcessosController extends AbstractController {
      * Recupera um registro
      */
     protected function findById() {
-        $viewModel = new AcessosModel();
         $url = $this->request["url"];
-        $res = $viewModel->findById($this->request['id']);
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new AcessosModel();
+            $res = $viewModel->findById($this->request['id']);
 
-        $code = OK_CODE;
-        if (!$res) {
-            $res = array();
-            $code = 404;
+            $code = OK_CODE;
+            if (!$res) {
+                $res = array();
+                $code = 404;
+            }
+            $this->returnJson($res, $code);
         }
-        $this->returnJson($res, $code);
     }
 
     /**
      * ADD share
      */
     protected function add() {
-        $viewModel = new AcessosModel();
         $url = $this->request["url"];
-        $body = (array) $this->request["body"];
-        $obj = new Acessos();
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new AcessosModel();
+            $body = (array) $this->request["body"];
+            $obj = new Acessos();
 
-        if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
-            $obj->setId(null);
-            $obj->setAcesso($body['acesso']);
-            $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+            if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
+                $obj->setId(null);
+                $obj->setAcesso($body['acesso']);
+                $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+            }
         }
     }
 
@@ -70,27 +82,31 @@ class AcessosController extends AbstractController {
      * Atualiza um registro
      */
     protected function update() {
-        $viewModel = new AcessosModel();
         $url = $this->request["url"];
-        $obj = new Acessos();
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new AcessosModel();
+            $obj = new Acessos();
 
-        $id = $this->request["id"];
-        $obj_old = $viewModel->findById($id);
-        if ($obj_old) {
+            $id = $this->request["id"];
+            $obj_old = $viewModel->findById($id);
+            if ($obj_old) {
 
-            $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
-            
-            $code = OK_CODE;
+                $obj_new = (array) $this->request["body"];
+                $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
 
-            if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
-                $obj->setId($body['id']);
-                $obj->setAcesso($body['acesso']);
-                $this->returnJson($viewModel->update($obj), $code, $url);
+                $code = OK_CODE;
+
+                if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
+                    $obj->setId($body['id']);
+                    $obj->setAcesso($body['acesso']);
+                    $this->returnJson($viewModel->update($obj), $code, $url);
+                }
+            } else {
+                $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
             }
-        } else {
-            $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
         }
     }
 
@@ -99,15 +115,17 @@ class AcessosController extends AbstractController {
      */
     protected function delete() {
         $url = $this->request["url"];
-        $viewModel = new AcessosModel();
-        $obj = $viewModel->findById($this->request['id']);
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new AcessosModel();
+            $obj = $viewModel->findById($this->request['id']);
 
-        if ($obj) {
-            $res = $viewModel->delete($this->request['id']);
-            $this->returnJson($res, OK_CODE);
-        } else {
-            $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
+            if ($obj) {
+                $res = $viewModel->delete($this->request['id']);
+                $this->returnJson($res, OK_CODE);
+            } else {
+                $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
+            }
         }
     }
 

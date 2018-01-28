@@ -25,7 +25,7 @@ class Request {
     private function getAuthorizationHeaders() {
         foreach (getallheaders() as $name => $value) {
             if ($name == 'Authorization') {
-                return $value;
+                return str_replace('Beare ','', $value);
             }
         }
         return null;
@@ -56,7 +56,7 @@ class Request {
                 if (count($body)) {
                     $this->request['body'] = $body;
                 } else {
-                    $res = new StandartError(BAD_REQUEST_CODE, ERROR_SINTAXE . "[{$json}]", null, $this->getURL());
+                    $res = new StandartError(CONFLICT_CODE, CONFLICT, ERROR_SINTAXE . "[{$json}]", $this->getURL());
                     $res->getJsonError();
                     $this->request = null;
                 }

@@ -54,16 +54,20 @@ class TipoJustificativasController extends AbstractController {
      * ADD share
      */
     protected function add() {
-        
-        $viewModel = new TipoJustificativasModel();
-        $url = $this->request["url"];
-        $body = (array) $this->request["body"];
-        $obj = new TipoJustificativas();
 
-        if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
-            $obj->setId(null);
-            $obj->setTipoJustificativa($body['tipo_justificativa']);
-            $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+        $url = $this->request["url"];
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new TipoJustificativasModel();
+            $body = (array) $this->request["body"];
+            $obj = new TipoJustificativas();
+
+            if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
+                $obj->setId(null);
+                $obj->setTipoJustificativa($body['tipo_justificativa']);
+                $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+            }
         }
     }
 
@@ -71,27 +75,31 @@ class TipoJustificativasController extends AbstractController {
      * Atualiza um registro
      */
     protected function update() {
-        $viewModel = new TipoJustificativasModel();
         $url = $this->request["url"];
-        $obj = new TipoJustificativas();
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new TipoJustificativasModel();
+            $obj = new TipoJustificativas();
 
-        $id = $this->request["id"];
-        $obj_old = $viewModel->findById($id);
-        if ($obj_old) {
+            $id = $this->request["id"];
+            $obj_old = $viewModel->findById($id);
+            if ($obj_old) {
 
-            $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
-            
-            $code = OK_CODE;
+                $obj_new = (array) $this->request["body"];
+                $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
 
-            if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
-                $obj->setId($body['id']);
-                $obj->setTipoJustificativa($body['tipo_justificativa']);
-                $this->returnJson($viewModel->update($obj), $code, $url);
+                $code = OK_CODE;
+
+                if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
+                    $obj->setId($body['id']);
+                    $obj->setTipoJustificativa($body['tipo_justificativa']);
+                    $this->returnJson($viewModel->update($obj), $code, $url);
+                }
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
             }
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
         }
     }
 
@@ -100,15 +108,19 @@ class TipoJustificativasController extends AbstractController {
      */
     protected function delete() {
         $url = $this->request["url"];
-        $viewModel = new TipoJustificativasModel();
-        $obj = $viewModel->findById($this->request['id']);
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new TipoJustificativasModel();
+            $obj = $viewModel->findById($this->request['id']);
 
-        if ($obj) {
-            $res = $viewModel->delete($this->request['id']);
-            $this->returnJson($res, OK_CODE);
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
+            if ($obj) {
+                $res = $viewModel->delete($this->request['id']);
+                $this->returnJson($res, OK_CODE);
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
+            }
         }
     }
 

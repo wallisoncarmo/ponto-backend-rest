@@ -84,6 +84,17 @@ class UsuariosModel extends AbstractModel {
         return $teste["token"];
     }
 
+    function findUsuarioByToken($token) {
+        $this->query('SELECT usuarios_id,acessos_id,acesso FROM dbs_ponto.usuarios_token AS ut
+                    INNER JOIN usuarios AS u ON (u.id=usuarios_id) 
+                    INNER JOIN acessos AS a ON(acessos_id=a.id)
+                    WHERE tempo_vida>NOW();
+                    AND token=:token');
+        $this->bind(':token', $token);
+        $rows = $this->findOne();
+        return $rows;
+    }
+
     function login(Usuarios $obj) {
 
         // verifica se o email existe

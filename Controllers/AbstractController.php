@@ -12,7 +12,7 @@ namespace Controllers;
  * Classe Abastrata para as controladoras
  * @author Wallison do Carmo Costa
  */
-abstract class AbstractController {
+abstract class AbstractController extends \Controllers\AuthController {
 
     protected $request;
     protected $action;

@@ -54,16 +54,19 @@ class TipoTelefonesController extends AbstractController {
      * ADD share
      */
     protected function add() {
-        
-        $viewModel = new TipoTelefonesModel();
         $url = $this->request["url"];
-        $body = (array) $this->request["body"];
-        $obj = new TipoTelefones();
 
-        if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
-            $obj->setId(null);
-            $obj->setTipoTelefone($body['tipo_telefone']);
-            $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new TipoTelefonesModel();
+            $body = (array) $this->request["body"];
+            $obj = new TipoTelefones();
+
+            if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
+                $obj->setId(null);
+                $obj->setTipoTelefone($body['tipo_telefone']);
+                $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+            }
         }
     }
 
@@ -71,27 +74,31 @@ class TipoTelefonesController extends AbstractController {
      * Atualiza um registro
      */
     protected function update() {
-        $viewModel = new TipoTelefonesModel();
         $url = $this->request["url"];
-        $obj = new TipoTelefones();
 
-        $id = $this->request["id"];
-        $obj_old = $viewModel->findById($id);
-        if ($obj_old) {
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new TipoTelefonesModel();
+            $obj = new TipoTelefones();
 
-            $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
-            
-            $code = OK_CODE;
+            $id = $this->request["id"];
+            $obj_old = $viewModel->findById($id);
+            if ($obj_old) {
 
-            if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
-                $obj->setId($body['id']);
-                $obj->setTipoTelefone($body['tipo_telefone']);
-                $this->returnJson($viewModel->update($obj), $code, $url);
+                $obj_new = (array) $this->request["body"];
+                $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
+
+                $code = OK_CODE;
+
+                if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
+                    $obj->setId($body['id']);
+                    $obj->setTipoTelefone($body['tipo_telefone']);
+                    $this->returnJson($viewModel->update($obj), $code, $url);
+                }
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NotFoundId, $url);
+                $res->getJsonError();
             }
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND,NotFoundId, $url);
-            $res->getJsonError();
         }
     }
 
@@ -100,15 +107,19 @@ class TipoTelefonesController extends AbstractController {
      */
     protected function delete() {
         $url = $this->request["url"];
-        $viewModel = new TipoTelefonesModel();
-        $obj = $viewModel->findById($this->request['id']);
 
-        if ($obj) {
-            $res = $viewModel->delete($this->request['id']);
-            $this->returnJson($res, OK_CODE);
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NotFoundId, $url);
-            $res->getJsonError();
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new TipoTelefonesModel();
+            $obj = $viewModel->findById($this->request['id']);
+
+            if ($obj) {
+                $res = $viewModel->delete($this->request['id']);
+                $this->returnJson($res, OK_CODE);
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NotFoundId, $url);
+                $res->getJsonError();
+            }
         }
     }
 

@@ -54,15 +54,19 @@ class CargosController extends AbstractController {
      * ADD share
      */
     protected function add() {
-        $viewModel = new CargosModel();
         $url = $this->request["url"];
-        $body = (array) $this->request["body"];
-        $obj = new Cargos();
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new CargosModel();
+            $body = (array) $this->request["body"];
+            $obj = new Cargos();
 
-        if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
-            $obj->setId(null);
-            $obj->setCargo($body['cargo']);
-            $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+            if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
+                $obj->setId(null);
+                $obj->setCargo($body['cargo']);
+                $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+            }
         }
     }
 
@@ -70,27 +74,31 @@ class CargosController extends AbstractController {
      * Atualiza um registro
      */
     protected function update() {
-        $viewModel = new CargosModel();
         $url = $this->request["url"];
-        $obj = new Cargos();
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new CargosModel();
+            $obj = new Cargos();
 
-        $id = $this->request["id"];
-        $obj_old = $viewModel->findById($id);
-        if ($obj_old) {
+            $id = $this->request["id"];
+            $obj_old = $viewModel->findById($id);
+            if ($obj_old) {
 
-            $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
-            
-            $code = OK_CODE;
+                $obj_new = (array) $this->request["body"];
+                $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
 
-            if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
-                $obj->setId($body['id']);
-                $obj->setCargo($body['cargo']);
-                $this->returnJson($viewModel->update($obj), $code, $url);
+                $code = OK_CODE;
+
+                if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
+                    $obj->setId($body['id']);
+                    $obj->setCargo($body['cargo']);
+                    $this->returnJson($viewModel->update($obj), $code, $url);
+                }
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
             }
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
         }
     }
 
@@ -99,15 +107,19 @@ class CargosController extends AbstractController {
      */
     protected function delete() {
         $url = $this->request["url"];
-        $viewModel = new CargosModel();
-        $obj = $viewModel->findById($this->request['id']);
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new CargosModel();
+            $obj = $viewModel->findById($this->request['id']);
 
-        if ($obj) {
-            $res = $viewModel->delete($this->request['id']);
-            $this->returnJson($res, OK_CODE);
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
+            if ($obj) {
+                $res = $viewModel->delete($this->request['id']);
+                $this->returnJson($res, OK_CODE);
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
+            }
         }
     }
 

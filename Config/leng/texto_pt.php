@@ -20,6 +20,14 @@ define("CREATE", 'Create');
 define("OK_CODE", 200);
 define("OK", 'Ok');
 
+define("CONFLICT_CODE", 409);
+define("CONFLICT", 'CONFLICT');
+define("ERROR_SINTAXE", "Foi encontrado um erro na sintaxe da requisição favor verificar.");
+
+define("FORBIDDEN_CODE", 403);
+define("FORBIDDEN", 'FORBIDDEN');
+define("FORBIDDEN_MSG", 'Você não tem permissão para acessar esse recurso.');
+
 // PALAVRA SOLTAS
 define("CARACTER", "caracter");
 
@@ -36,6 +44,10 @@ define("ERROR_CPF", "Esse não é um cpf válido");
 define("ERROR_BOOLEAN", "Informe um tipo de boolean.");
 define("ERROR_EMAIL", "Informe um e-mail válido");
 
-define("ERROR_SINTAXE", "Foi encontrado um erro na sintaxe da requisição favor verificar.");
 define("ERROR_LOGIN_EMAIL", "O E-mail informado não existe.");
 define("ERROR_LOGIN_SENHA", "Senha incorreta.");
+
+// PERFIL [DEPOIS DEIXAR ESSA PARTE DINÂMICA]
+define("ADMINISTRADOR", "ADMINISTRADOR");
+define("GERENTE", "GERENTE");
+define("COLABORADOR", "COLABORADOR");

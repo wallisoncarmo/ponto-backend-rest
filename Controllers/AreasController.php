@@ -54,17 +54,21 @@ class AreasController extends AbstractController {
      * ADD share
      */
     protected function add() {
-        $viewModel = new AreasModel();
         $url = $this->request["url"];
-        $body = (array) $this->request["body"];
-        $obj = new Areas();
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new AreasModel();
+            $body = (array) $this->request["body"];
+            $obj = new Areas();
 
-        if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
-            $obj->setId(null);
-            $obj->setArea($body['area']);
-            $obj->setSigla($body['sigla']);
+            if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
+                $obj->setId(null);
+                $obj->setArea($body['area']);
+                $obj->setSigla($body['sigla']);
 
-            $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+                $this->returnJson($viewModel->add($obj), CREATE_CODE, $url);
+            }
         }
     }
 
@@ -72,28 +76,32 @@ class AreasController extends AbstractController {
      * Atualiza um registro
      */
     protected function update() {
-        $viewModel = new AreasModel();
         $url = $this->request["url"];
-        $obj = new Areas();
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new AreasModel();
+            $obj = new Areas();
 
-        $id = $this->request["id"];
-        $obj_old = $viewModel->findById($id);
-        if ($obj_old) {
+            $id = $this->request["id"];
+            $obj_old = $viewModel->findById($id);
+            if ($obj_old) {
 
-            $obj_new = (array) $this->request["body"];
-            $body = $obj->compareDif($obj_new, $obj_old,$obj->getCampos());
-            
-            $code = OK_CODE;
+                $obj_new = (array) $this->request["body"];
+                $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
 
-            if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
-                $obj->setId($body['id']);
-                $obj->setArea($body['area']);
-                $obj->setSigla($body['sigla']);
-                $this->returnJson($viewModel->update($obj), $code, $url);
+                $code = OK_CODE;
+
+                if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
+                    $obj->setId($body['id']);
+                    $obj->setArea($body['area']);
+                    $obj->setSigla($body['sigla']);
+                    $this->returnJson($viewModel->update($obj), $code, $url);
+                }
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
             }
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
         }
     }
 
@@ -101,16 +109,20 @@ class AreasController extends AbstractController {
      * Deleta um registro
      */
     protected function delete() {
-        $url = $this->request["url"];
-        $viewModel = new AreasModel();
-        $obj = $viewModel->findById($this->request['id']);
+            $url = $this->request["url"];
+        
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
+            $viewModel = new AreasModel();
+            $obj = $viewModel->findById($this->request['id']);
 
-        if ($obj) {
-            $res = $viewModel->delete($this->request['id']);
-            $this->returnJson($res, OK_CODE);
-        } else {
-            $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
-            $res->getJsonError();
+            if ($obj) {
+                $res = $viewModel->delete($this->request['id']);
+                $this->returnJson($res, OK_CODE);
+            } else {
+                $res = new StandartError(BAD_REQUEST_CODE, NOT_FOUND, NOT_FOUND_ID, $url);
+                $res->getJsonError();
+            }
         }
     }
 
