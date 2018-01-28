@@ -89,13 +89,12 @@ class UsuariosModel extends AbstractModel {
                     INNER JOIN usuarios AS u ON (u.id=ut.usuarios_id) 
                     INNER JOIN colaboradores AS c ON (u.id=c.usuarios_id) 
                     INNER JOIN acessos AS a ON(acessos_id=a.id)
-                    WHERE tempo_vida>NOW();
+                    WHERE tempo_vida>NOW()
                     AND token=:token');
         $this->bind(':token', $token);
         $rows = $this->findOne();
-       
-        return $rows;
 
+        return $rows;
     }
 
     function login(Usuarios $obj) {
@@ -133,11 +132,7 @@ class UsuariosModel extends AbstractModel {
         $this->execute();
         $id = $this->lastInsertId();
 
-        if (!$id) {
-            
-        } else {
-            return $this->findById($id);
-        }
+        return ['id'=>$id];
     }
 
     function update(Usuarios $obj) {

@@ -54,6 +54,10 @@ define("WARNING_MARCACAO_MSG", "Você está excedendo sua carga horaria");
 
 
 // PERFIL [DEPOIS DEIXAR ESSA PARTE DINÂMICA]
+define("ADMINISTRADOR_ID", 1);
+define("GERENTE_ID", 2);
+define("COLABORADOR_ID", 3);
+
 define("ADMINISTRADOR", "ADMINISTRADOR");
 define("GERENTE", "GERENTE");
 define("COLABORADOR", "COLABORADOR");

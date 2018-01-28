@@ -20,14 +20,19 @@ class Colaboradores extends AbstractClasse {
     private $nome;
     private $cpf;
     private $rg;
-    private $genereo;
+    private $genero;
     private $matricula;
     private $carga_horaria;
     private $area;
     private $cargo;
-    private $user;
+    private $usuario;
+    private $telefone;
+    private $cep;
+    private $endereco;
+    private $cidade;
+    private $bairro;
     private $cadatro;
-    private $atualizacao;
+    private $atualizado;
     private $ativo;
     private $excluido;
 
@@ -47,8 +52,8 @@ class Colaboradores extends AbstractClasse {
         return $this->rg;
     }
 
-    function getGenereo() {
-        return $this->genereo;
+    function getGenero() {
+        return $this->genero;
     }
 
     function getMatricula() {
@@ -67,16 +72,36 @@ class Colaboradores extends AbstractClasse {
         return $this->cargo;
     }
 
-    function getUser() {
-        return $this->user;
+    function getUsuario() {
+        return $this->usuario;
+    }
+
+    function getTelefone() {
+        return $this->telefone;
+    }
+
+    function getCep() {
+        return $this->cep;
+    }
+
+    function getEndereco() {
+        return $this->endereco;
+    }
+
+    function getCidade() {
+        return $this->cidade;
+    }
+
+    function getBairro() {
+        return $this->bairro;
     }
 
     function getCadatro() {
         return $this->cadatro;
     }
 
-    function getAtualizacao() {
-        return $this->atualizacao;
+    function getAtualizado() {
+        return $this->atualizado;
     }
 
     function getAtivo() {
@@ -103,8 +128,8 @@ class Colaboradores extends AbstractClasse {
         $this->rg = $rg;
     }
 
-    function setGenereo($genereo) {
-        $this->genereo = $genereo;
+    function setGenero($genero) {
+        $this->genero = $genero;
     }
 
     function setMatricula($matricula) {
@@ -115,24 +140,44 @@ class Colaboradores extends AbstractClasse {
         $this->carga_horaria = $carga_horaria;
     }
 
-    function setArea($area) {
+    function setArea(Areas $area) {
         $this->area = $area;
     }
 
-    function setCargo($cargo) {
+    function setCargo(Cargos $cargo) {
         $this->cargo = $cargo;
     }
 
-    function setUser($user) {
-        $this->user = $user;
+    function setUsuario(Usuarios $usuario) {
+        $this->usuario = $usuario;
+    }
+
+    function setTelefone(Telefones $telefone) {
+        $this->telefone = $telefone;
+    }
+
+    function setCep($cep) {
+        $this->cep = $cep;
+    }
+
+    function setEndereco($endereco) {
+        $this->endereco = $endereco;
+    }
+
+    function setCidade($cidade) {
+        $this->cidade = $cidade;
+    }
+
+    function setBairro($bairro) {
+        $this->bairro = $bairro;
     }
 
     function setCadatro($cadatro) {
         $this->cadatro = $cadatro;
     }
 
-    function setAtualizacao($atualizacao) {
-        $this->atualizacao = $atualizacao;
+    function setAtualizado($atualizado) {
+        $this->atualizado = $atualizado;
     }
 
     function setAtivo($ativo) {
@@ -155,15 +200,25 @@ class Colaboradores extends AbstractClasse {
     function getCampos() {
         return [
             'id' => ['tipo' => 'integer', 'obrigatorio' => true, 'key' => true],
+            'email' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
+            'senha' => ['tipo' => 'string', 'max' => 50, 'min' => 10, 'obrigatorio' => true],
             'nome' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
-            'cpf' => ['tipo' => 'string', 'max' => 20, 'min' => null, 'obrigatorio' => true],
-            'rg' => ['tipo' => 'string', 'max' => 20, 'min' => null, 'obrigatorio' => true],
+            'cpf' => ['tipo' => 'string', 'max' => 20, 'min' => 20, 'obrigatorio' => true],
+            'rg' => ['tipo' => 'string', 'max' => 20, 'min' => 20, 'obrigatorio' => true],
             'genero' => ['tipo' => 'integer', 'obrigatorio' => true],
             'matricula' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
-            'carga_horaria' => ['tipo' => 'integer', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
-            'area_id' => ['tipo' => 'integer', 'obrigatorio' => true],
-            'cargo_id' => ['tipo' => 'integer', 'obrigatorio' => true],
-            'user_id' => ['tipo' => 'integer', 'obrigatorio' => true],
+            'carga_horaria' => ['tipo' => 'integer', 'obrigatorio' => true],
+            'areas_id' => ['tipo' => 'integer', 'obrigatorio' => true],
+            'cargos_id' => ['tipo' => 'integer', 'obrigatorio' => true],
+            'usuarios_id' => ['tipo' => 'integer', 'obrigatorio' => false],
+            'telefone1' => ['tipo' => 'string', 'max' => 30, 'min' => 9, 'obrigatorio' => true],
+            'telefone2' => ['tipo' => 'string', 'max' => 30, 'min' => 9, 'obrigatorio' => false],
+            'tipo1' => ['tipo' => 'integer', 'obrigatorio' => true],
+            'tipo2' => ['tipo' => 'integer', 'obrigatorio' => false],
+            'cep' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
+            'endereco' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
+            'cidade' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
+            'bairro' => ['tipo' => 'string', 'max' => 250, 'min' => 5, 'obrigatorio' => true],
             'cadastro' => ['tipo' => 'string', 'max' => 2, 'min' => 10, 'obrigatorio' => false],
             'atualizado' => ['tipo' => 'string', 'max' => 2, 'min' => 10, 'obrigatorio' => false],
             'ativo' => ['tipo' => 'boolean', 'obrigatorio' => false],

@@ -45,11 +45,7 @@ class TipoTelefonesModel extends AbstractModel {
         $this->execute();
         $id = $this->lastInsertId();
 
-        if (!$id) {
-            
-        } else {
-            return $this->findById($id);
-        }
+        return ['id'=>$id];
     }
 
     function update(TipoTelefones $obj) {
