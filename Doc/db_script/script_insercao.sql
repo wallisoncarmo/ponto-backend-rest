@@ -155,7 +155,7 @@ VALUES
 
 /* Carga para Marcadores */
 INSERT INTO dbs_ponto.marcacoes
-(hora,colaboradores_id,cadastro)
+(marcacao,colaboradores_id,cadastro)
 VALUES
 /** registro 1 **/ 
 ('2018-01-01 08:11',1,'2018-01-01 08:11'),

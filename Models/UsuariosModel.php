@@ -69,7 +69,7 @@ class UsuariosModel extends AbstractModel {
         $cstrong = True;
         $token = bin2hex(openssl_random_pseudo_bytes(64, $cstrong));
 
-        $this->query("INSERT INTO dbs_ponto.usuarios_token(token,tempo_vida,cadastro,usuarios_id)VALUES(:token,ADDDATE( now(), INTERVAL " . TOKEN_DEZ_MINUTOS . "),now(),:usuarios_id)");
+        $this->query("INSERT INTO dbs_ponto.usuarios_token(token,tempo_vida,cadastro,usuarios_id)VALUES(:token,ADDDATE( now(), INTERVAL " . TOKEN_UM_DIA . "),now(),:usuarios_id)");
         $this->bind(':token', $obj->getId() . $token);
         $this->bind(':usuarios_id', $obj->getId());
         $this->findOne();
@@ -85,7 +85,7 @@ class UsuariosModel extends AbstractModel {
     }
 
     function findUsuarioByToken($token) {
-        $this->query('SELECT usuarios_id,acessos_id,acesso FROM dbs_ponto.usuarios_token AS ut
+        $this->query('SELECT u.id,acessos_id,acesso FROM dbs_ponto.usuarios_token AS ut
                     INNER JOIN usuarios AS u ON (u.id=usuarios_id) 
                     INNER JOIN acessos AS a ON(acessos_id=a.id)
                     WHERE tempo_vida>NOW();

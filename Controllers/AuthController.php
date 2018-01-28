@@ -32,12 +32,17 @@ class AuthController {
         $res = $viewModel->findUsuarioByToken($token);
 
         if (in_array($res['acesso'], $perfil, true)) {
-            return true;
+            return $res;
         }
 
         $res = new StandartError(FORBIDDEN_CODE, FORBIDDEN, FORBIDDEN_MSG, $url);
         $res->getJsonError();
         return false;
+    }
+
+    protected function findUserByToken($token) {
+        $viewModel = new \Models\UsuariosModel();
+        return $res = $viewModel->findUsuarioByToken($token);
     }
 
 }

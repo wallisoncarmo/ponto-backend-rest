@@ -1,7 +1,7 @@
 <?php
 
 // Cabeçalho para JSON 
-header('Content-type: application/json');
+//header('Content-type: application/json');
 // Configurações iniciais
 require('config.php');
 require('autoload.php');

@@ -117,7 +117,7 @@ DEFAULT CHARACTER SET = utf8;
 
 CREATE TABLE IF NOT EXISTS `dbs_ponto`.`marcacoes` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `hora` DATETIME NOT NULL,
+  `marcacao` DATETIME NOT NULL,
   `colaboradores_id` INT(11) NOT NULL,
   `cadastro` DATETIME NOT NULL DEFAULT NOW(),
   `atualizado` DATETIME NULL DEFAULT NULL,
