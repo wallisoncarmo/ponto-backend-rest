@@ -62,7 +62,7 @@ class UsuariosController extends AbstractController {
     /**
      * ADD share
      */
-    protected function login() {
+    protected function loginPOST() {
         $url = $this->request["url"];
 
         //verifica se está sendo acessado pelo metodo POST

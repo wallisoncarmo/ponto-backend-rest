@@ -32,7 +32,7 @@ class MarcacoesController extends AbstractController {
         if ($user) {
             $viewModel = new MarcacoesModel();
 
-            $res = $viewModel->findAll($user['id']);
+            $res = $viewModel->findAll($user['colaboradores_id']);
 
             if (!$res) {
                 $res = array();
@@ -47,6 +47,8 @@ class MarcacoesController extends AbstractController {
      */
     protected function findById() {
         $url = $this->request["url"];
+
+
         //valida quem tem acesso a esse metodo
         if ($this->authorization([ADMINISTRADOR, GERENTE], $this->request["authorization"], $url)) {
             $viewModel = new MarcacoesModel();
@@ -58,6 +60,75 @@ class MarcacoesController extends AbstractController {
                 $code = 404;
             }
             $this->returnJson($res, $code);
+        }
+    }
+
+    /**
+     * ADD share
+     */
+    protected function baterPontoGET() {
+        $url = $this->request["url"];
+
+        $user = $this->authorization([ADMINISTRADOR, GERENTE, COLABORADOR], $this->request["authorization"], $url);
+
+        if ($user) {
+
+            $viewModel = new MarcacoesModel();
+
+
+            $id = $user['colaboradores_id'];
+            $dateTime = ('2018-01-29 17:00');
+            $horas = ('17:00');
+
+            $carga_horaria = $user['carga_horaria'] / 5;
+            $carga_horaria = date('H:i', strtotime($carga_horaria . ':00'));
+
+            $date = ('2018-01-29');
+
+            $marcacao = $viewModel->findByDate($id, $date);
+
+            if (isset($marcacao["qtd_marcacao"])) {
+
+                if ($marcacao["qtd_marcacao"] > LIMITE_MARCAOES) {
+                    $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, ERROR_LIMITE_MARCAOES, $url);
+                    $res->getJsonError();
+                    return;
+                }
+            }
+
+            $verf = verfificaDiaUtil($dateTime);
+
+            if ($verf) {
+                $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, $verf, $url);
+                $res->getJsonError();
+                return;
+            }
+
+            $obj = new Marcacoes();
+            $obj->setId(null);
+            $obj->setMarcacao($dateTime);
+            $obj->setColaborador(new Colaboradores());
+            $obj->getColaborador()->setId($id);
+            $result = $viewModel->add($obj);
+
+            if (isset($marcacao["qtd_marcacao"])) {
+
+                if ($marcacao["qtd_marcacao"] == LIMITE_MARCAOES - 1) {
+
+                    $verf = boolHoraMaior($horas, $marcacao["marcacao"]["almoco_fim"], $marcacao["total"], $carga_horaria);
+
+                    if ($verf) {
+
+                        $url_inserido = str_replace(["_", "-", "baterponto"], ["", "", ""], $url);
+
+                        header("Location: " . ROOT_URL . $url . '/' . $url_inserido);
+                        $res = new StandartError(CREATE_CODE, WARNING, $verf, $url);
+                        $res->getJsonError();
+                        return;
+                    }
+                }
+            }
+            $this->returnJson($result, CREATE_CODE, $url);
         }
     }
 

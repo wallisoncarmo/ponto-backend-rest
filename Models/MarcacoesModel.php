@@ -18,11 +18,11 @@ use Classes\Marcacoes;
 class MarcacoesModel extends AbstractModel {
 
     function findAll($id) {
-        $this->query("SELECT m.id,DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,DATE_FORMAT(marcacao,'%H:%m:%s') AS horas   
+        $this->query("SELECT m.id,DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,DATE_FORMAT(marcacao,'%H:%m') AS horas   
                     FROM dbs_ponto.marcacoes AS m
                     INNER JOIN colaboradores AS c ON (colaboradores_id=c.id)
                     INNER JOIN usuarios AS u ON (usuarios_id=U.id)
-                    WHERE u.id=:id
+                    WHERE c.id=:id
                     AND m.excluido=false
                     AND DATE_FORMAT(marcacao,'%m/%Y')= DATE_FORMAT(NOW(),'%m/%Y')
                     ORDER BY m.id ASC");
@@ -32,6 +32,26 @@ class MarcacoesModel extends AbstractModel {
         $result = $this->montaListaMarcacao($rows);
 
         return $result;
+    }
+
+    function findByDate($id, $date) {
+        $this->query("SELECT m.id,DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,DATE_FORMAT(marcacao,'%H:%m:%s') AS horas   
+                    FROM dbs_ponto.marcacoes AS m
+                    INNER JOIN colaboradores AS c ON (colaboradores_id=c.id)
+                    INNER JOIN usuarios AS u ON (usuarios_id=U.id)
+                    WHERE colaboradores_id=:id
+                    AND m.excluido=false
+                    AND DATE_FORMAT(marcacao,'%Y-%m-%d')= :date
+                    ORDER BY m.id ASC");
+        $this->bind(':id', $id);
+        $this->bind(':date', $date);
+        $rows = $this->resultSet();
+
+        if (!empty($rows)) {
+            $result = $this->montaListaMarcacao($rows);
+            return current($result[1]);
+        }
+        return($rows);
     }
 
     function findByIdDetail($id) {
@@ -94,7 +114,7 @@ class MarcacoesModel extends AbstractModel {
         $this->bind(':marcacao', $obj->getMarcacao());
         $this->bind(':colaboradores_id', $obj->getColaborador()->getId());
         $this->bind(':id', $obj->getId());
-        
+
 
         $this->execute();
     }
@@ -109,19 +129,25 @@ class MarcacoesModel extends AbstractModel {
         $dias = array();
         $data = '';
         $count = 0;
+        $countMarcacao = 0;
         $dia = 0;
+
         foreach ($list as $key => $value) {
+
+
             if ($data != $value["datas"]) {
 
                 if ($dias) {
-                    $result[$dia] = [$this->montaMarcacao($dias, $data)];
+                    $result[$dia] = [$this->montaMarcacao($dias, $data, $countMarcacao)];
                 }
 
                 $data = $value["datas"];
                 $count = 0;
+                $countMarcacao = 0;
                 $dia++;
                 $dias = array();
             }
+
             $tipo = '';
             switch (++$count) {
                 case 1:
@@ -137,9 +163,16 @@ class MarcacoesModel extends AbstractModel {
                     $tipo = 'saida';
                     break;
             }
-
+            $countMarcacao++;
             $dias[$tipo] = $value["horas"];
         }
+
+        $ultimo = $this->montaMarcacao($dias, $data,$countMarcacao);
+
+        if ($ultimo) {
+            $result[$dia] = [$ultimo];
+        }
+
         return $result;
     }
 
@@ -149,66 +182,67 @@ class MarcacoesModel extends AbstractModel {
      * @param string $data data do dia
      * @return type
      */
-    private function montaMarcacao($dias, $data) {
+    private function montaMarcacao($dias, $data, $qtd_marcacao) {
 
         if (!isset($dias['entrada'])) {
-            $dias['entrada'] = "00:00:00";
+            $dias['entrada'] = "00:00";
         }
         if (!isset($dias['almoco_inicio'])) {
-            $dias['almoco_inicio'] = "00:00:00";
+            $dias['almoco_inicio'] = "00:00";
         }
         if (!isset($dias['almoco_fim'])) {
-            $dias['almoco_fim'] = "00:00:00";
+            $dias['almoco_fim'] = "00:00";
         }
         if (!isset($dias['saida'])) {
-            $dias['saida'] = "00:00:00";
+            $dias['saida'] = "00:00";
         }
 
-        $almoco = (strtotime($dias['almoco_fim']) - strtotime($dias['almoco_inicio']));
-        $manha = (strtotime($dias['almoco_inicio']) - strtotime($dias['entrada']));
-        $tarde = (strtotime($dias['saida']) - strtotime($dias['almoco_fim']));
+        $almoco_inicio = strtotime($dias['almoco_inicio']);
+        $almoco_fim = strtotime($dias['almoco_fim']);
+        $entrada = strtotime($dias['entrada']);
+        $saida = strtotime($dias['saida']);
+
+        // verifica se as datas são do mesmo tamanho
+
+        $almoco = $this->verificaDateTime($almoco_fim, $almoco_inicio);
+
+        $manha = $this->verificaDateTime($almoco_inicio, $entrada);
+
+        $tarde = $this->verificaDateTime($saida, $almoco_fim);
 
         $horas_trabalhadas = $manha + $tarde;
         $total = $horas_trabalhadas + $almoco;
 
-        if ($manha > 0) {
-            $manha = date('H:i:s', strtotime('-1 hour', $manha));
-        } else {
-            $manha = "00:00:00";
-        }
-        if ($almoco > 0) {
-            $almoco = date('H:i:s', strtotime('-1 hour', $almoco));
-        } else {
-            $manha = "00:00:00";
-        }
-        if ($tarde > 0) {
-            $tarde = date('H:i:s', strtotime('-1 hour', $tarde));
-        } else {
-            $manha = "00:00:00";
-        }
-
-
         if ($horas_trabalhadas > 0) {
-            $horas_trabalhadas = date('H:i:s', strtotime('-1 hour', $horas_trabalhadas));
+            $horas_trabalhadas = date('H:i', strtotime('-1 hour', $horas_trabalhadas));
         } else {
-            $horas_trabalhadas = "00:00:00";
+            $horas_trabalhadas = "00:00";
         }
 
         if ($total > 0) {
-            $total = date('H:i:s', strtotime('-1 hour', $total));
+            $total = date('H:i', strtotime('-1 hour', $total));
         } else {
-            $total = "00:00:00";
+            $total = "00:00";
         }
 
         return [
             'data' => $data,
-            'horas_manha' => $manha,
-            'horas_tarde' => $tarde,
+            'horas_manha' => date('H:i', strtotime('-1 hour', $manha)),
+            'descanco' => date('H:i', strtotime('-1 hour', $almoco)),
+            'horas_tarde' => date('H:i', strtotime('-1 hour', $tarde)),
             'marcacao' => $dias,
-            'descanco' => $almoco,
             'horas_trabalhadas' => $horas_trabalhadas,
             'total' => $total,
+            'qtd_marcacao' => $qtd_marcacao,
         ];
+    }
+
+    private function verificaDateTime($maior, $menor) {
+        if ($maior > $menor) {
+            return( $maior - $menor);
+        } else {
+            return 0;
+        }
     }
 
 }

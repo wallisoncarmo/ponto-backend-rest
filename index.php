@@ -1,7 +1,7 @@
 <?php
 
 // Cabeçalho para JSON 
-//header('Content-type: application/json');
+header('Content-type: application/json');
 // Configurações iniciais
 require('config.php');
 require('autoload.php');
@@ -17,7 +17,7 @@ use Config\Request;
 // prepara o request
 $request = new Request();
 
-if ($request->getRequest()) {    
+if ($request->getRequest()) {
 // inicia o boostrap
     $bootstrap = new Bootstrap($request->getRequest());
 

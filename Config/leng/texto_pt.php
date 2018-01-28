@@ -47,6 +47,12 @@ define("ERROR_EMAIL", "Informe um e-mail válido");
 define("ERROR_LOGIN_EMAIL", "O E-mail informado não existe.");
 define("ERROR_LOGIN_SENHA", "Senha incorreta.");
 
+define("ERROR_LIMITE_MARCAOES", "Você já execeu o limite de marcacoes de " . LIMITE_MARCAOES . " ao dia.");
+
+define("WARNING", "Warning");
+define("WARNING_MARCACAO_MSG", "Você está excedendo sua carga horaria");
+
+
 // PERFIL [DEPOIS DEIXAR ESSA PARTE DINÂMICA]
 define("ADMINISTRADOR", "ADMINISTRADOR");
 define("GERENTE", "GERENTE");

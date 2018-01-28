@@ -56,7 +56,7 @@ class Bootstrap {
                 }
             } else {
                 // monta o nome do metodo caso já possua
-                $this->action = str_replace(["_", "-"], ["", ""], $this->request['action']);
+                $this->action = str_replace(["_", "-"], ["", ""], $this->request['action'] . $this->request["type"]); // OS METODOS NÃO PADRÕES É NECESSARIO QUE SEJA INFORMADO O SEU TIPO NO FINAL
             }
         }
     }
