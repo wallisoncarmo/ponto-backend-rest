@@ -75,7 +75,7 @@ function getFeriados($ano = null) {
     ];
 }
 
-function verfificaDiaUtil($dia = null) {
+function verfificaDiaHoraUtil($dia = null) {
 
     $ano;
     if ($dia) {
@@ -103,6 +103,35 @@ function verfificaDiaUtil($dia = null) {
 
     if (!(strtotime($hora) >= strtotime(HORA_INICIO) && strtotime($hora) <= strtotime(HORA_FINAL_MAX))) {
         return "Não é possível bater o ponto essa hora, o horario de funcionamentos são das " . HORA_INICIO . " até as " . HORA_FINAL_MIN . " podendo se extender até as " . HORA_FINAL_MAX . ".";
+    }
+
+    return false;
+}
+
+function verfificaDiaUtil($dia = null) {
+
+    $ano;
+    if ($dia) {
+        $data = strtotime($dia);
+    } else {
+        $data = strtotime(date('Y-m-d H:i'));
+    }
+
+    $ano = date('Y', $data);
+    $hora = date('H:m', $data);
+    $diasemana_numero = date('w', $data);
+
+    if ($diasemana_numero == 0 || $diasemana_numero == 6) {
+        return "Não é possível bater o ponto em um Domingo";
+    }
+    if ($diasemana_numero == 6) {
+        return "Não é possível bater o ponto em um sábado";
+    }
+
+    $feriado = getFeriados($ano);
+
+    if (array_key_exists($data, $feriado)) {
+        return "Dia {$feriado[$data]['data']} é fériado de {$feriado[$data]['feriado']}, por isso não é possível bater o ponto.";
     }
 
     return false;

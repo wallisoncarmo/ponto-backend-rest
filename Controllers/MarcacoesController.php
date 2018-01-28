@@ -75,10 +75,9 @@ class MarcacoesController extends AbstractController {
 
             $viewModel = new MarcacoesModel();
 
-
             $id = $user['colaboradores_id'];
-            $dateTime = ('2018-01-29 17:00');
-            $horas = ('17:00');
+            $dateTime = date('Y-m-d H:s');
+            $horas = date('H:s');
 
             $carga_horaria = $user['carga_horaria'] / 5;
             $carga_horaria = date('H:i', strtotime($carga_horaria . ':00'));
@@ -96,7 +95,7 @@ class MarcacoesController extends AbstractController {
                 }
             }
 
-            $verf = verfificaDiaUtil($dateTime);
+            $verf = verfificaDiaHoraUtil($dateTime);
 
             if ($verf) {
                 $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, $verf, $url);
