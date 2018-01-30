@@ -101,31 +101,31 @@ VALUES
 
 /* Carga para Endereço */
 INSERT INTO dbs_ponto.enderecos
-(id,endereco,cidade,bairro,colaboradores_id)
+(id,endereco,cidade,bairro,colaboradores_id,cep)
 VALUES
-(1,'Quadra QNQ, 60 - AE24','Brasília','Taguatinga Norte',1),
-(2,'Quadra QND, 20 - LT14 ','Brasília','Taguatinga Norte',2),
-(3,'C 4, 0 - LT06','Brasília','Taguatinga Norte',3),
-(4,'Quadra QND, 12 - AE21','Brasília','Taguatinga Norte',4),
-(5,'Quadra QNG, 20  LT14','Brasília','Taguatinga Norte',5),
+(1,'Quadra QNQ, 60 - AE24','Brasília','Taguatinga Norte',1,'65474345'),
+(2,'Quadra QND, 20 - LT14 ','Brasília','Taguatinga Norte',2,'65474345'),
+(3,'C 4, 0 - LT06','Brasília','Taguatinga Norte',3,'65474345'),
+(4,'Quadra QND, 12 - AE21','Brasília','Taguatinga Norte',4,'65474345'),
+(5,'Quadra QNG, 20  LT14','Brasília','Taguatinga Norte',5,'65474345'),
 
-(6,'Quadra Sig Quadra 3, 0 - Sala 3 BLB SL202','Brasília','Ceilândia',6),
-(7,'Quadra QNM 17, 0 - AE1','Brasília','Ceilandia Sul',7),
-(8,'Quadra QNM 17, 0 - AE1','Brasília','Ceilandia Sul',8),
-(9,'Quadra QNM 15, 0 - BLD','Brasília','Ceilândia',9),
-(10,'Quadra QNM 1 Conjunto F, 0 - LT01','Brasília','Ceilandia Sul',10),
+(6,'Quadra Sig Quadra 3, 0 - Sala 3 BLB SL202','Brasília','Ceilândia',6,'65474345'),
+(7,'Quadra QNM 17, 0 - AE1','Brasília','Ceilandia Sul',7,'65474345'),
+(8,'Quadra QNM 17, 0 - AE1','Brasília','Ceilandia Sul',8,'65474345'),
+(9,'Quadra QNM 15, 0 - BLD','Brasília','Ceilândia',9,'65474345'),
+(10,'Quadra QNM 1 Conjunto F, 0 - LT01','Brasília','Ceilandia Sul',10,'65474345'),
 
-(11,'Quadra SGAS 610, 0 - MD68 ','Brasília','Asa Sul',11),
-(12,'Quadra SGAS 608, 0 - Bla','Brasília','Asa Sul',12),
-(13,'Quadra CLS 115 Bloco B, 0','Brasília','Asa Sul',13),
-(14,'Quadra CLS 302 Bloco C','Brasília','Asa Sul',14),
-(15,'Quadra CLS 403 Bloco B','Brasília','Asa Sul',15),
+(11,'Quadra SGAS 610, 0 - MD68 ','Brasília','Asa Sul',11,'65474345'),
+(12,'Quadra SGAS 608, 0 - Bla','Brasília','Asa Sul',12,'65474345'),
+(13,'Quadra CLS 115 Bloco B, 0','Brasília','Asa Sul',13,'65474345'),
+(14,'Quadra CLS 302 Bloco C','Brasília','Asa Sul',14,'65474345'),
+(15,'Quadra CLS 403 Bloco B','Brasília','Asa Sul',15,'65474345'),
 
-(16,'Setor SHLN BL F','Brasília','Asa Norte',16),
-(17,'Quadra SMHN Quadra 1 Bloco A','Brasília','Asa Norte',17),
-(18,'SEPN 505 BL D, 0','Brasília','Asa Norte',18),
-(19,'Quadra SGAN 606','Brasília','Asa Norte',19),
-(20,'Setor SHLN Bloco F','Brasília','Asa Norte',20);
+(16,'Setor SHLN BL F','Brasília','Asa Norte',16,'65474345'),
+(17,'Quadra SMHN Quadra 1 Bloco A','Brasília','Asa Norte',17,'65474345'),
+(18,'SEPN 505 BL D, 0','Brasília','Asa Norte',18,'65474345'),
+(19,'Quadra SGAN 606','Brasília','Asa Norte',19,'65474345'),
+(20,'Setor SHLN Bloco F','Brasília','Asa Norte',20,'65474345');
 
 
 /* Carga para Telefones */
@@ -158,25 +158,30 @@ INSERT INTO dbs_ponto.marcacoes
 (marcacao,colaboradores_id,cadastro)
 VALUES
 /** registro 1 **/ 
-('2018-01-01 08:11',1,'2018-01-01 08:11'),
+('2018-01-01 08:11',1,'2018-01-01 08:00'),
+('2018-01-01 12:11',1,'2018-01-01 12:11'),
+('2018-01-01 14:11',1,'2018-01-01 14:11'),
+('2018-01-01 18:11',1,'2018-01-01 18:11'), 
+
+('2018-01-01 08:11',1,'2018-01-01 08:00'),
 ('2018-01-01 12:11',1,'2018-01-01 12:11'),
 ('2018-01-01 14:11',1,'2018-01-01 14:11'),
 ('2018-01-01 18:11',1,'2018-01-01 18:11'), 
 
 ('2018-01-02 08:30',1,'2018-01-02 08:30'),
 ('2018-01-02 12:30',1,'2018-01-02 12:30'),
-('2018-01-02 14:10',1,'2018-01-02 14:10'),
+('2018-01-02 15:10',1,'2018-01-02 14:10'),
 ('2018-01-02 18:10',1,'2018-01-02 18:10'),
 
-('2018-01-03 08:30',1,'2018-01-03 08:30'),
+('2018-01-03 09:30',1,'2018-01-03 08:30'),
 ('2018-01-03 12:30',1,'2018-01-03 12:30'),
 ('2018-01-03 14:10',1,'2018-01-03 14:10'),
-('2018-01-03 18:10',1,'2018-01-03 18:10'),
+('2018-01-03 17:10',1,'2018-01-03 18:10'),
 
-('2018-01-04 08:30',1,'2018-01-04 08:30'),
+('2018-01-04 09:30',1,'2018-01-04 08:30'),
 ('2018-01-04 12:30',1,'2018-01-04 12:30'),
 ('2018-01-04 14:10',1,'2018-01-04 14:10'),
-('2018-01-04 18:10',1,'2018-01-04 18:10'),
+('2018-01-04 19:10',1,'2018-01-04 18:10'),
 
 ('2018-01-05 08:30',1,'2018-01-05 08:30'),
 ('2018-01-05 12:30',1,'2018-01-05 12:30'),
@@ -185,7 +190,7 @@ VALUES
 
 ('2018-01-08 08:30',1,'2018-01-08 08:30'),
 ('2018-01-08 12:30',1,'2018-01-08 12:30'),
-('2018-01-08 14:10',1,'2018-01-08 14:10'),
+('2018-01-08 14:10',1,'2018-01-08 15:10'),
 ('2018-01-08 18:10',1,'2018-01-08 18:10'),
 
 ('2018-01-09 08:30',1,'2018-01-09 08:30'),
@@ -258,6 +263,16 @@ VALUES
 ('2018-01-26 12:30',1,'2018-01-26 12:30'),
 ('2018-01-26 14:10',1,'2018-01-26 14:10'),
 ('2018-01-26 18:10',1,'2018-01-26 18:10'),
+
+('2018-01-29 08:11',1,'2018-01-29 08:00'),
+('2018-01-29 12:11',1,'2018-01-29 12:11'),
+('2018-01-29 14:11',1,'2018-01-29 14:11'),
+('2018-01-29 18:11',1,'2018-01-29 18:11'), 
+
+('2018-01-30 08:11',1,'2018-01-29 08:00'),
+('2018-01-30 12:11',1,'2018-01-29 12:11'),
+('2018-01-30 14:11',1,'2018-01-29 14:11'),
+('2018-01-30 18:11',1,'2018-01-29 18:11'), 
 
  /** registro 2 **/ 
 ('2018-01-01 08:11',2,'2018-01-01 08:11'),

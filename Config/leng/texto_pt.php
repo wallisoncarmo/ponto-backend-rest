@@ -49,7 +49,7 @@ define("ERROR_LOGIN_SENHA", "Senha incorreta.");
 
 define("ERROR_DUPLICATA", "Não é possível cadastrar outra justificativa no mesmo dia.");
 
-define("ERROR_LIMITE_MARCAOES", "Você já execeu o limite de marcacoes de " . LIMITE_MARCAOES . " ao dia.");
+define("ERROR_LIMITE_MARCAOES", "Você já excedeu o limite de marcações de " . LIMITE_MARCAOES . " ao dia.");
 
 define("WARNING", "Warning");
 define("WARNING_MARCACAO_MSG", "Você está excedendo sua carga horaria");

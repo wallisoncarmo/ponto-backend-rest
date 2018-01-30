@@ -60,6 +60,26 @@ class UsuariosController extends AbstractController {
     }
 
     /**
+     * Recupera um registro
+     */
+    protected function usuarioTokenGET() {
+        $url = $this->request["url"];
+
+        //valida quem tem acesso a esse metodo
+        if ($this->authorization([ADMINISTRADOR], $this->request["authorization"], $url)) {
+            $viewModel = new UsuariosModel();
+            $res = $viewModel->findUsuarioByToken($this->request["authorization"]);
+
+            $code = OK_CODE;
+            if (!$res) {
+                $res = array();
+                $code = NOT_FOUND_CODE;
+            }
+            $this->returnJson($res, $code);
+        }
+    }
+
+    /**
      * ADD 
      */
     protected function loginPOST() {
@@ -79,10 +99,10 @@ class UsuariosController extends AbstractController {
                 $token = $viewModel->login($obj);
 
                 if ($token == ERROR_LOGIN_EMAIL) {
-                    $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, ERROR_LOGIN_EMAIL, $url);
+                    $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, ERROR_LOGIN_EMAIL, $url);
                     $res->getJsonError();
                 } else if ($token == ERROR_LOGIN_SENHA) {
-                    $res = new StandartError(NOT_FOUND_CODE, NOT_FOUND, ERROR_LOGIN_SENHA, $url);
+                    $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, ERROR_LOGIN_SENHA, $url);
                     $res->getJsonError();
                 } else {
                     $this->returnJsonLogin($token, OK_CODE);

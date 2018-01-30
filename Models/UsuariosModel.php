@@ -85,7 +85,7 @@ class UsuariosModel extends AbstractModel {
     }
 
     function findUsuarioByToken($token) {
-        $this->query('SELECT u.id, c.id as colaboradores_id,acessos_id,acesso,carga_horaria FROM dbs_ponto.usuarios_token AS ut
+        $this->query('SELECT u.id,nome,email, c.id as colaboradores_id,acessos_id,acesso,carga_horaria FROM dbs_ponto.usuarios_token AS ut
                     INNER JOIN usuarios AS u ON (u.id=ut.usuarios_id) 
                     INNER JOIN colaboradores AS c ON (u.id=c.usuarios_id) 
                     INNER JOIN acessos AS a ON(acessos_id=a.id)

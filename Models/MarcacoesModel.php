@@ -84,7 +84,8 @@ class MarcacoesModel extends AbstractModel {
 
         if (!empty($rows)) {
             $result = $this->montaListaMarcacao($rows);
-            return $result[1];
+            $result['data'] = $result['data'][1];
+            return $result;
         }
         return($rows);
     }
@@ -157,20 +158,22 @@ class MarcacoesModel extends AbstractModel {
      */
     private function montaListaMarcacao($list) {
         $result = array();
+        $return = array();
         $dias = array();
         $data = '';
         $count = 0;
+        $count_total = 0;
         $countMarcacao = 0;
         $semana_horas_trabalhadas = array();
         $relatorio_semana = array();
         $relatorio_status = array();
 
         $relatorio_status = [
-            ['label' => 'na_hora', 'value' => 0],
-            ['label' => 'atrasado', 'value' => 0],
-            ['label' => 'devendo', 'value' => "00:00"],
-            ['label' => 'sobrando', 'value' => "00:00"],
-            ['label' => 'hora_completa', 'value' => 0],
+            ['label' => 'Pontualidade', 'value' => 0],
+            ['label' => 'Atrasado', 'value' => 0],
+            ['label' => 'Devendo', 'value' => "00:00"],
+            ['label' => 'Sobrando', 'value' => "00:00"],
+            ['label' => 'Hora completa', 'value' => 0],
         ];
 
         $dia = 0;
@@ -201,6 +204,8 @@ class MarcacoesModel extends AbstractModel {
                     } else {
                         $relatorio_status[1]['value'] ++; // atrasado
                     }
+                    $count_total++;
+
                     break;
                 case 2:
                     $tipo = 'almoco_inicio';
@@ -246,10 +251,17 @@ class MarcacoesModel extends AbstractModel {
             }
         }
 
-        $result['data'] = $result;
-        $result['relatorios'] = ['relatorio_semana' => $relatorio_semana, 'relatorio_status' => $relatorio_status];
+        $relatorio_status[0]['value'] = round(($relatorio_status[0]['value'] / $count_total) * 100,1);
+        $relatorio_status[1]['value'] = round(($relatorio_status[1]['value'] / $count_total) * 100,1);
 
-        return $result;
+        unset($relatorio_status[2]);
+        unset($relatorio_status[3]);
+        unset($relatorio_status[4]);
+
+        $return['data'] = $result;
+        $return['relatorios'] = ['relatorio_semana' => $relatorio_semana, 'relatorio_status' => $relatorio_status];
+
+        return $return;
     }
 
     /**
@@ -307,6 +319,11 @@ class MarcacoesModel extends AbstractModel {
     }
 
     private function intervalo($entrada, $saida) {
+
+        if ($entrada == "00:00" || $saida == "00:00") {
+            return "00:00";
+        }
+
         $entrada = explode(':', $entrada);
         $saida = explode(':', $saida);
         $minutos = ( $saida[0] - $entrada[0] ) * 60 + $saida[1] - $entrada[1];

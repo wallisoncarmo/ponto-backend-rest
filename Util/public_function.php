@@ -98,11 +98,11 @@ function verfificaDiaHoraUtil($dia = null) {
     $feriado = getFeriados($ano);
 
     if (array_key_exists($data, $feriado)) {
-        return "Dia {$feriado[$data]['data']} é fériado de {$feriado[$data]['feriado']}, por isso não é possível bater o ponto.";
+        return "Dia {$feriado[$data]['data']} é feriado de {$feriado[$data]['feriado']}, por isso não é possível bater o ponto.";
     }
 
     if (!(strtotime($hora) >= strtotime(HORA_INICIO) && strtotime($hora) <= strtotime(HORA_FINAL_MAX))) {
-        return "Não é possível bater o ponto essa hora, o horario de funcionamentos são das " . HORA_INICIO . " até as " . HORA_FINAL_MIN . " podendo se extender até as " . HORA_FINAL_MAX . ".";
+        return "Não é possível bater o ponto essa hora, o horário de funcionamentos são das " . HORA_INICIO . " até as " . HORA_FINAL_MIN . " podendo se estender até as " . HORA_FINAL_MAX . ".";
     }
 
     return false;
@@ -151,4 +151,15 @@ function boolHoraMaior($atual, $ultima, $total, $carga) {
         return false;
     }
     return WARNING_MARCACAO_MSG . ". Hoje foram feitas " . date('H:i', $result) . " horas e sua carga é de " . $carga . " horas semanais.";
+}
+
+function convertDataEN($data) {
+
+    if (strstr($data, '/')) {
+        $ano = substr($data, 6);
+        $mes = substr($data, 3, -5);
+        $dia = substr($data, 0, -8);
+        return $ano . "-" . $mes . "-" . $dia;
+    }
+    return $data;
 }

@@ -111,16 +111,21 @@ class JustificativasController extends AbstractController {
 
             $id = $this->request["id"];
             $obj_old = $viewModel->findById($id);
+
+
             if ($obj_old) {
 
                 $obj_new = (array) $this->request["body"];
-                $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
+                
 
+                $obj_new['periodo'] = convertDataEN($obj_new['periodo']);
+
+                $body = $obj->compareDif($obj_new, $obj_old, $obj->getCampos());
                 $code = OK_CODE;
 
                 if ($obj->validaCampos($obj->getCampos(), $body, $url, true)) {
 
-                    $verf = (verfificaDiaUtil($body['periodo']));
+                    $verf = (verfificaDiaUtil());
 
                     if ($verf) {
                         $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, $verf, $url);

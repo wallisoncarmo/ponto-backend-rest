@@ -1,5 +1,5 @@
 #Config
-#Fri Jan 26 14:14:16 BRST 2018
+#Tue Jan 30 11:40:48 BRST 2018
 cfg.location.y=-8
 cfg.location.x=-8
-cfg.recentes=C\:\\xampp\\htdocs\\arquitetura_mvc\\Doc\\db\\ponto_mer.brM3
+cfg.recentes=C\:\\xampp\\htdocs\\ponto-backend-rest\\Doc\\db_model\\ponto_mer.brM3;C\:\\xampp\\htdocs\\arquitetura_mvc\\Doc\\db\\ponto_mer.brM3

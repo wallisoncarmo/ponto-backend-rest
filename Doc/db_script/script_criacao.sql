@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS `dbs_ponto`.`enderecos` (
   `endereco` VARCHAR(250) NOT NULL,
   `cidade` VARCHAR(250) NOT NULL,
   `bairro` VARCHAR(250) NOT NULL,
+  `cep` VARCHAR(250) NOT NULL,
   `colaboradores_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_enderecos_colaboradores1_idx` (`colaboradores_id` ASC),
@@ -136,19 +137,18 @@ DEFAULT CHARACTER SET = utf8;
 CREATE TABLE IF NOT EXISTS `dbs_ponto`.`justificativas` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `justificativa` TEXT NOT NULL,
-  `periodo_inicio` DATE NOT NULL,
-  `periodo_fim` DATE NOT NULL,
-  `tipo_justificativa_id` INT(11) NOT NULL,
+  `periodo` DATE NOT NULL,
+  `tipo_justificativas_id` INT(11) NOT NULL,
   `colaboradores_id` INT(11) NOT NULL,
   `cadastro` DATETIME NOT NULL DEFAULT NOW(),
   `atualizado` DATETIME NULL DEFAULT NULL,
   `ativo` TINYINT(4) NOT NULL DEFAULT 1,
   `excluido` TINYINT(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  INDEX `fk_justificativas_tipo1_idx` (`tipo_justificativa_id` ASC),
+  INDEX `fk_justificativas_tipo1_idx` (`tipo_justificativas_id` ASC),
   INDEX `fk_justificativas_colaboradores1_idx` (`colaboradores_id` ASC),
   CONSTRAINT `fk_justificativas_tipo1`
-    FOREIGN KEY (`tipo_justificativa_id`)
+    FOREIGN KEY (`tipo_justificativas_id`)
     REFERENCES `dbs_ponto`.`tipo_justificativas` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `dbs_ponto`.`usuarios_token` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `token` VARCHAR(250) NOT NULL,
   `tempo_vida` DATETIME NOT NULL,
-  `cadastro` DATETIME NOT NULL,
+  `cadastro` DATETIME NOT NULL DEFAULT now(),
   `usuarios_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_usuarios_token_usuarios1_idx` (`usuarios_id` ASC),

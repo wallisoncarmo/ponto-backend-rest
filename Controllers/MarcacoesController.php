@@ -35,7 +35,7 @@ class MarcacoesController extends AbstractController {
             $res = $viewModel->findAll($user['colaboradores_id']);
 
             if (!$res) {
-               $this->returnJson($res, NOT_FOUND_CODE);
+                $this->returnJson($res, NOT_FOUND_CODE);
             } else {
                 $this->returnJson($res, OK_CODE);
             }
@@ -118,6 +118,8 @@ class MarcacoesController extends AbstractController {
             $date = date('Y-m-d');
 
             $marcacao = $viewModel->findByDate($id, $date);
+
+            $marcacao = $marcacao['data'];
 
             if (isset($marcacao["qtd_marcacao"])) {
 
