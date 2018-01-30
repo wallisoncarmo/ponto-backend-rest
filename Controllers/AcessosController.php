@@ -59,7 +59,7 @@ class AcessosController extends AbstractController {
     }
 
     /**
-     * ADD share
+     * ADD 
      */
     protected function add() {
         $url = $this->request["url"];

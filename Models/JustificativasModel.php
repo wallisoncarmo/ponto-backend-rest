@@ -48,6 +48,18 @@ class JustificativasModel extends AbstractModel {
         return $rows;
     }
 
+    function findByDate($colaboradores_id, $date) {
+        $this->query('SELECT id,justificativa,periodo,tipo_justificativas_id ,colaboradores_id 
+                        FROM justificativas 
+                        WHERE excluido=false 
+                        AND colaboradores_id= :colaboradores_id
+                        AND periodo= :periodo;');
+        $this->bind(':colaboradores_id', $colaboradores_id);
+        $this->bind(':periodo', $date);
+        $rows = $this->findOne();
+        return $rows;
+    }
+
     function delete($id) {
         $this->query('UPDATE justificativas SET ativo=false, excluido=true, atualizado=now() WHERE id= :id;');
         $this->bind(':id', $id);
@@ -69,7 +81,7 @@ class JustificativasModel extends AbstractModel {
         $this->execute();
         $id = $this->lastInsertId();
 
-        return ['id'=>$id];
+        return ['id' => $id];
     }
 
     function update(Justificativas $obj) {

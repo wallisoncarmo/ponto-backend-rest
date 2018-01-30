@@ -18,7 +18,11 @@ use Classes\Marcacoes;
 class MarcacoesModel extends AbstractModel {
 
     function findAll($id) {
-        $this->query("SELECT m.id,DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,DATE_FORMAT(marcacao,'%H:%m') AS horas   
+        $this->query("SELECT 
+                        m.id,
+                        DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,
+                        DATE_FORMAT(marcacao,'%H:%m') AS horas,   
+                        WEEK(marcacao) AS semana   
                     FROM dbs_ponto.marcacoes AS m
                     INNER JOIN colaboradores AS c ON (colaboradores_id=c.id)
                     INNER JOIN usuarios AS u ON (usuarios_id=U.id)
@@ -29,27 +33,58 @@ class MarcacoesModel extends AbstractModel {
         $this->bind(':id', $id);
         $rows = $this->resultSet();
 
-        $result = $this->montaListaMarcacao($rows);
-
-        return $result;
+        if ($rows) {
+            $result = $this->montaListaMarcacao($rows);
+            return $result;
+        }
+        return $rows;
     }
 
-    function findByDate($id, $date) {
-        $this->query("SELECT m.id,DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,DATE_FORMAT(marcacao,'%H:%m:%s') AS horas   
+    function findAllByAnoMes($id, $ano, $mes) {
+        $this->query("SELECT 
+                        m.id,
+                        DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,
+                        DATE_FORMAT(marcacao,'%H:%m') AS horas,   
+                        WEEK(marcacao) AS semana
                     FROM dbs_ponto.marcacoes AS m
                     INNER JOIN colaboradores AS c ON (colaboradores_id=c.id)
                     INNER JOIN usuarios AS u ON (usuarios_id=U.id)
-                    WHERE colaboradores_id=:id
+                    WHERE c.id=:id
+                    AND m.excluido=false
+                    AND DATE_FORMAT(marcacao,'%Y')= {$ano}
+                    AND DATE_FORMAT(marcacao,'%m')= {$mes}
+                    ORDER BY m.id ASC");
+        $this->bind(':id', $id);
+
+        $rows = $this->resultSet();
+
+        if ($rows) {
+            $result = $this->montaListaMarcacao($rows);
+            return $result;
+        }
+        return $rows;
+    }
+
+    function findByDate($id, $date) {
+        $this->query("SELECT 
+                        m.id,
+                        DATE_FORMAT(marcacao, '%d/%m/%Y') AS datas,
+                        DATE_FORMAT(marcacao,'%H:%m') AS horas,   
+                        WEEK(marcacao) AS semana  
+                    FROM dbs_ponto.marcacoes AS m
+                    INNER JOIN colaboradores AS c ON (colaboradores_id=c.id)
+                    INNER JOIN usuarios AS u ON (usuarios_id=U.id)
+                    WHERE colaboradores_id=:colaboradores_id
                     AND m.excluido=false
                     AND DATE_FORMAT(marcacao,'%Y-%m-%d')= :date
                     ORDER BY m.id ASC");
-        $this->bind(':id', $id);
+        $this->bind(':colaboradores_id', $id);
         $this->bind(':date', $date);
         $rows = $this->resultSet();
 
         if (!empty($rows)) {
             $result = $this->montaListaMarcacao($rows);
-            return current($result[1]);
+            return $result[1];
         }
         return($rows);
     }
@@ -100,7 +135,7 @@ class MarcacoesModel extends AbstractModel {
         $this->execute();
         $id = $this->lastInsertId();
 
-        return ['id'=>$id];
+        return ['id' => $id];
     }
 
     function update(Marcacoes $obj) {
@@ -126,6 +161,18 @@ class MarcacoesModel extends AbstractModel {
         $data = '';
         $count = 0;
         $countMarcacao = 0;
+        $semana_horas_trabalhadas = array();
+        $relatorio_semana = array();
+        $relatorio_status = array();
+
+        $relatorio_status = [
+            ['label' => 'na_hora', 'value' => 0],
+            ['label' => 'atrasado', 'value' => 0],
+            ['label' => 'devendo', 'value' => "00:00"],
+            ['label' => 'sobrando', 'value' => "00:00"],
+            ['label' => 'hora_completa', 'value' => 0],
+        ];
+
         $dia = 0;
 
         foreach ($list as $key => $value) {
@@ -134,7 +181,8 @@ class MarcacoesModel extends AbstractModel {
             if ($data != $value["datas"]) {
 
                 if ($dias) {
-                    $result[$dia] = [$this->montaMarcacao($dias, $data, $countMarcacao)];
+                    $result[$dia] = $this->montaMarcacao($dias, $data, $countMarcacao);
+                    $semana_horas_trabalhadas[$value['semana']][] = $result[$dia]['horas_trabalhadas'];
                 }
 
                 $data = $value["datas"];
@@ -148,6 +196,11 @@ class MarcacoesModel extends AbstractModel {
             switch (++$count) {
                 case 1:
                     $tipo = 'entrada';
+                    if ($value["horas"] == "08:00" || $this->verificaDatas("08:15", $value["horas"])) {
+                        $relatorio_status[0]['value'] ++; // na hora
+                    } else {
+                        $relatorio_status[1]['value'] ++; // atrasado
+                    }
                     break;
                 case 2:
                     $tipo = 'almoco_inicio';
@@ -163,11 +216,38 @@ class MarcacoesModel extends AbstractModel {
             $dias[$tipo] = $value["horas"];
         }
 
-        $ultimo = $this->montaMarcacao($dias, $data,$countMarcacao);
+        $ultimo = $this->montaMarcacao($dias, $data, $countMarcacao);
 
         if ($ultimo) {
-            $result[$dia] = [$ultimo];
+            $result[$dia] = $ultimo;
+            $semana_horas_trabalhadas[$value['semana']][] = $result[$dia]['horas_trabalhadas'];
         }
+
+        $total = "00:00";
+        foreach ($semana_horas_trabalhadas as $key => $value) {
+
+            foreach ($value as $horas) {
+                $total = $this->somaHoras($total, $horas);
+
+                if ($horas == "08:00") {
+                    $relatorio_status[4]['value'] ++; // hora completa
+                } else if ($this->verificaDatas($horas, "08:00")) {
+                    $relatorio_status[3]['value'] = $this->somaHoras($horas, $relatorio_status[3]['value']); //sobrando
+                } else {
+                    $relatorio_status[2]['value'] = $this->somaHoras($horas, $relatorio_status[2]['value']); //devendo
+                }
+            }
+
+            if ($total != "00:00") {
+                $relatorio_semana[$key]['semana'] = 'Semana Nº' . ($key + 1);
+                $relatorio_semana[$key]['media'] = $this->mediaHoras($total, count($value));
+                $relatorio_semana[$key]['total'] = $total;
+                $total = "00:00";
+            }
+        }
+
+        $result['data'] = $result;
+        $result['relatorios'] = ['relatorio_semana' => $relatorio_semana, 'relatorio_status' => $relatorio_status];
 
         return $result;
     }
@@ -193,52 +273,64 @@ class MarcacoesModel extends AbstractModel {
             $dias['saida'] = "00:00";
         }
 
-        $almoco_inicio = strtotime($dias['almoco_inicio']);
-        $almoco_fim = strtotime($dias['almoco_fim']);
-        $entrada = strtotime($dias['entrada']);
-        $saida = strtotime($dias['saida']);
+        $manha = $this->intervalo($dias['entrada'], $dias['almoco_inicio']);
 
-        // verifica se as datas são do mesmo tamanho
+        $descanco = $this->intervalo($dias['almoco_inicio'], $dias['almoco_fim']);
 
-        $almoco = $this->verificaDateTime($almoco_fim, $almoco_inicio);
+        $tarde = $this->intervalo($dias['almoco_fim'], $dias['saida']);
 
-        $manha = $this->verificaDateTime($almoco_inicio, $entrada);
 
-        $tarde = $this->verificaDateTime($saida, $almoco_fim);
+        $total = $this->intervalo($dias['entrada'], $dias['saida']);
 
-        $horas_trabalhadas = $manha + $tarde;
-        $total = $horas_trabalhadas + $almoco;
-
-        if ($horas_trabalhadas > 0) {
-            $horas_trabalhadas = date('H:i', strtotime('-1 hour', $horas_trabalhadas));
-        } else {
-            $horas_trabalhadas = "00:00";
-        }
-
-        if ($total > 0) {
-            $total = date('H:i', strtotime('-1 hour', $total));
-        } else {
-            $total = "00:00";
-        }
+        $horas_trabalhadas = $this->intervalo($descanco, $total);
 
         return [
             'data' => $data,
-            'horas_manha' => date('H:i', strtotime('-1 hour', $manha)),
-            'descanco' => date('H:i', strtotime('-1 hour', $almoco)),
-            'horas_tarde' => date('H:i', strtotime('-1 hour', $tarde)),
+            'horas_manha' => date('H:i', strtotime($manha)),
+            'descanco' => date('H:i', strtotime($descanco)),
+            'horas_tarde' => date('H:i', strtotime($tarde)),
             'marcacao' => $dias,
-            'horas_trabalhadas' => $horas_trabalhadas,
-            'total' => $total,
+            'horas_trabalhadas' => date('H:i', strtotime($horas_trabalhadas)),
+            'horas_trabalhadas_milissegundos' => strtotime($horas_trabalhadas),
+            'total' => date('H:i', strtotime($total)),
             'qtd_marcacao' => $qtd_marcacao,
         ];
     }
 
-    private function verificaDateTime($maior, $menor) {
-        if ($maior > $menor) {
-            return( $maior - $menor);
+    private function verificaDatas($maior, $menor) {
+
+        if (strtotime($maior) > strtotime($menor)) {
+            return true;
         } else {
-            return 0;
+            return false;
         }
+    }
+
+    private function intervalo($entrada, $saida) {
+        $entrada = explode(':', $entrada);
+        $saida = explode(':', $saida);
+        $minutos = ( $saida[0] - $entrada[0] ) * 60 + $saida[1] - $entrada[1];
+        if ($minutos < 0)
+            $minutos += 24 * 60;
+        return sprintf('%d:%d', $minutos / 60, $minutos % 60);
+    }
+
+    private function somaHoras($data1, $data2) {
+        $data1 = explode(':', $data1);
+        $data2 = explode(':', $data2);
+        $minutos = ( $data2[0] + $data1[0] ) * 60 + $data2[1] + $data1[1];
+        if ($minutos < 0)
+            $minutos += 24 * 60;
+        return sprintf('%d:%d', $minutos / 60, $minutos % 60);
+    }
+
+    private function mediaHoras($total, $count) {
+
+        $total = explode(':', $total);
+        $minutos = (( $total[0] ) * 60 + $total[1]) / $count;
+        if ($minutos < 0)
+            $minutos += 24 * 60;
+        return sprintf('%d:%d', $minutos / 60, $minutos % 60);
     }
 
 }

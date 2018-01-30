@@ -60,7 +60,7 @@ class UsuariosController extends AbstractController {
     }
 
     /**
-     * ADD share
+     * ADD 
      */
     protected function loginPOST() {
         $url = $this->request["url"];
@@ -95,7 +95,7 @@ class UsuariosController extends AbstractController {
     }
 
     /**
-     * ADD share
+     * ADD 
      */
     protected function add() {
         $url = $this->request["url"];

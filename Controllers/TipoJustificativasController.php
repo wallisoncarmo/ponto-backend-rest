@@ -51,7 +51,7 @@ class TipoJustificativasController extends AbstractController {
     }
 
     /**
-     * ADD share
+     * ADD 
      */
     protected function add() {
 

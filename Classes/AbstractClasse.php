@@ -54,7 +54,7 @@ abstract class AbstractClasse {
 
                         case 'string' || 'char' || 'text':
                             $msg = $this->validString($value, $campos[$key]['max'], $campos[$key]['min']);
-                            if ($msg) {
+                            if (trim($msg) != "") {
                                 $res->setErros($key, $msg);
                             }
                             break;

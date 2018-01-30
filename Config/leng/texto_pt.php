@@ -47,6 +47,8 @@ define("ERROR_EMAIL", "Informe um e-mail válido");
 define("ERROR_LOGIN_EMAIL", "O E-mail informado não existe.");
 define("ERROR_LOGIN_SENHA", "Senha incorreta.");
 
+define("ERROR_DUPLICATA", "Não é possível cadastrar outra justificativa no mesmo dia.");
+
 define("ERROR_LIMITE_MARCAOES", "Você já execeu o limite de marcacoes de " . LIMITE_MARCAOES . " ao dia.");
 
 define("WARNING", "Warning");

@@ -35,7 +35,40 @@ class MarcacoesController extends AbstractController {
             $res = $viewModel->findAll($user['colaboradores_id']);
 
             if (!$res) {
-                $res = array();
+               $this->returnJson($res, NOT_FOUND_CODE);
+            } else {
+                $this->returnJson($res, OK_CODE);
+            }
+        }
+    }
+
+    /**
+     * Recupera todos os registros
+     */
+    protected function espelhoPontoGET() {
+        //valida quem tem acesso a esse metodo
+        $url = $this->request["url"];
+
+        $user = $this->authorization([ADMINISTRADOR, GERENTE, COLABORADOR], $this->request["authorization"], $url);
+
+        if ($user) {
+            $viewModel = new MarcacoesModel();
+            if ($this->request["ano"]) {
+                $ano = trim($this->request["ano"]);
+            } else {
+                $ano = date("Y");
+            }
+
+            if ($this->request["id"]) {
+                $mes = trim($this->request["id"]);
+            } else {
+                $mes = date("m");
+            }
+
+            $res = $viewModel->findAllByAnoMes($user['colaboradores_id'], $ano, $mes);
+
+            if (!$res) {
+                $this->returnJson($res, NOT_FOUND_CODE);
             } else {
                 $this->returnJson($res, OK_CODE);
             }
@@ -64,7 +97,7 @@ class MarcacoesController extends AbstractController {
     }
 
     /**
-     * ADD share
+     * ADD 
      */
     protected function baterPontoGET() {
         $url = $this->request["url"];
@@ -82,7 +115,7 @@ class MarcacoesController extends AbstractController {
             $carga_horaria = $user['carga_horaria'] / 5;
             $carga_horaria = date('H:i', strtotime($carga_horaria . ':00'));
 
-            $date = ('2018-01-29');
+            $date = date('Y-m-d');
 
             $marcacao = $viewModel->findByDate($id, $date);
 
@@ -132,7 +165,27 @@ class MarcacoesController extends AbstractController {
     }
 
     /**
-     * ADD share
+     * ADD 
+     */
+    protected function pontoHojeGET() {
+        $url = $this->request["url"];
+
+        $user = $this->authorization([ADMINISTRADOR, GERENTE, COLABORADOR], $this->request["authorization"], $url);
+
+        if ($user) {
+
+            $viewModel = new MarcacoesModel();
+
+            $date = date('Y-m-d');
+
+            $result = $viewModel->findByDate($user['colaboradores_id'], $date);
+
+            $this->returnJson($result, OK_CODE);
+        }
+    }
+
+    /**
+     * ADD 
      */
     protected function add() {
         $url = $this->request["url"];

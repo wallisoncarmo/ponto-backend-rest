@@ -53,7 +53,7 @@ class JustificativasController extends AbstractController {
     }
 
     /**
-     * ADD share
+     * ADD 
      */
     protected function add() {
         $url = $this->request["url"];
@@ -68,6 +68,16 @@ class JustificativasController extends AbstractController {
 
             if ($obj->validaCampos($obj->getCampos(), $body, $url)) {
 
+
+                $periodo = date("Y-m-d", strtotime($body['periodo']));
+                $duplicata = $viewModel->findByDate($user['colaboradores_id'], $periodo);
+
+                if ($duplicata) {
+                    $res = new StandartError(BAD_REQUEST_CODE, BAD_REQUEST, ERROR_DUPLICATA, $url);
+                    $res->getJsonError();
+                    return;
+                }
+
                 $verf = (verfificaDiaUtil($body['periodo']));
 
                 if ($verf) {
@@ -77,7 +87,7 @@ class JustificativasController extends AbstractController {
                 }
                 $obj->setId(null);
                 $obj->setJustificativa($body['justificativa']);
-                $obj->setPeriodo($body['periodo']);
+                $obj->setPeriodo($periodo);
                 $obj->setTipoJustifitivas(new TipoJustificativas());
                 $obj->getTipoJustifitivas()->setId($body['tipo_justificativas_id']);
                 $obj->setColaborador(new Colaboradores());
